@@ -112,6 +112,8 @@ public final class ConfiguratorAction extends Action {
             int configuratorId = Integer.parseInt(request.getParameter("configuratorId"));
             configuratorHandler = new ConfiguratorHandler();
             configuratorHandler.execute(configuratorId, configuratorConnId);
+        } else if(mapping.getPath().equals("/PrevalidationProcessLaunch")) {
+            
         }
         return mapping.findForward(forwardName);
     }

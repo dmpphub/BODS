@@ -1,0 +1,20 @@
+canvas {
+	width: 50px;
+}
+
+.div-table-row-progress {
+	float: left;
+	display: table-column;
+	padding: 5px;
+	margin: 5px;
+	background: #F0F8FF;
+	color: black;
+	font-size: 15px;
+	line-height: 1.3em;
+	border: 2px double #fff;
+	border-radius: 10px;
+	box-shadow: 0 0 6px #B2B2B2;
+	font-weight: normal;
+	width: 650px;
+	/* height: 100%; */
+}

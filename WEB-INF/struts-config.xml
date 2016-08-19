@@ -145,6 +145,11 @@
 	<action path="/ConfiguratorSaveAction" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
 		<forward name="forward.success" path="validationLaunch.main"/>
 	</action>
+	
+	<!-- Interface Column Mapping -->
+	<action path="/PrevalidationProcessLaunch" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="prevalidationProcess.main"/>
+	</action>
 		
 </action-mappings>
 

@@ -267,5 +267,26 @@
 	
 	<definition name="targetColumnMapping.footer" extends="bodsbase.main.footer"/>
 	
+	<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+	 <definition name="prevalidationProcess.main" extends="bodsbase.main">
+    	<put name="page.head"         value="prevalidationProcess.html.head"/>
+        <put name="page.menu"    	  value="prevalidationProcess.menu"/>
+        <put name="page.body"         value="prevalidationProcess.body"/>
+        <put name="page.footer"       value="prevalidationProcess.footer"/>
+    </definition>
+    
+    <definition name="prevalidationProcess.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="prevalidationProcess.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="prevalidationProcess.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/configurator/PrevalidationProcess.jsp"/>
+	</definition>
+	
+	<definition name="prevalidationProcess.footer" extends="bodsbase.main.footer"/>
+	
 	
 </tiles-definitions>
