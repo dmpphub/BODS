@@ -1,0 +1,158 @@
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+          "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+<struts-config>
+
+<form-beans type="org.apache.struts.action.ActionFormBean">
+	<form-bean name="loginForm" type="com.dataprocess.bods.web.form.LoginForm"/>
+	<!-- Source Configurator Forms -->
+	<form-bean name="queryDefinitionForm" type="com.dataprocess.bods.web.form.QueryDefinitionForm"/>
+	<!-- Configurator Forms -->
+	<form-bean name="configuratorForm" type="com.dataprocess.bods.web.form.ConfiguratorForm"/>
+	<!-- Instance Forms -->
+	<form-bean name="instanceDetailsForm" type="com.dataprocess.bods.web.form.InstanceDetailsForm"/>
+	<!-- Source Configurator Forms -->
+	<form-bean name="sourceConfiguratorForm" type="com.dataprocess.bods.web.form.SourceConfiguratorForm"/>
+</form-beans>
+
+<global-forwards>
+	<forward name="forward.home" path="/home.etl"></forward>
+</global-forwards>
+
+<action-mappings type="com.livinglogic.struts.workflow.WorkflowMapping">
+	<action path="/LoginForm" name="loginForm" scope="session" validate="false" type="com.dataprocess.bods.web.action.LoginAction">
+		<forward name="login.success" path="/jsp/login.jsp"/>
+	</action>
+	
+	<action path="/LoginAction" name="loginForm" scope="session" validate="false" type="com.dataprocess.bods.web.action.LoginAction">
+		<forward name="forward.success" path="home.main"/>
+		<forward name="login.failure" path="home.main"/>
+	</action>
+	
+	<action path="/home" name="loginForm" scope="session" validate="false" type="com.dataprocess.bods.web.action.LoginAction">
+		<forward name="forward.success" path="home.main"/>
+		<forward name="login.failure" path="home.main"/>
+	</action>
+	
+	<action path="/Logout" name="loginForm" scope="session" validate="false" type="com.dataprocess.bods.web.action.LoginAction">
+		<forward name="logout.success" path="/jsp/login.jsp"/>
+	</action>
+	
+	<!-- Source Configurator -->
+	<action path="/QueryDefinitionLaunch" name="queryDefinitionForm" attribute="queryDefinitionForm" validate="false" 
+		type="com.dataprocess.bods.web.action.QueryDefinitionAction">
+		<forward name="forward.success" path="queryDefinition.main"/>
+		<forward name="forward.failure" path="home.main"/>
+	</action>
+	
+	<action path="/QueryDefinitionValidate" input="queryDefinition.main" name="queryDefinitionForm" attribute="queryDefinitionForm" validate="false" 
+		type="com.dataprocess.bods.web.action.QueryDefinitionAction">
+		<forward name="forward.success" path="queryDefinition.main"/>
+		<forward name="forward.failure" path="queryDefinition.main"/>
+		<forward name="forward.home" path="home.main"/>
+	</action>
+	
+	<action path="/QueryDefinitionColumnList" input="queryDefinition.main" name="queryDefinitionForm" attribute="queryDefinitionForm" validate="false" 
+		type="com.dataprocess.bods.web.action.QueryDefinitionAction">
+		<forward name="forward.success" path="queryColumnDefinition.main" />
+	</action>
+	
+	<action path="/QueryDefinitionDataList" input="queryDefinition.main" name="queryDefinitionForm" attribute="queryDefinitionForm" validate="false" 
+		type="com.dataprocess.bods.web.action.QueryDefinitionAction">
+		<forward name="forward.success" path="queryDefinitionDataList.main" />
+	</action>
+
+	<action path="/QueryDefinitionSaveAction" input="queryDefinition.main" name="queryDefinitionForm" attribute="queryDefinitionForm" validate="false" 
+		type="com.dataprocess.bods.web.action.QueryDefinitionAction">
+		<forward name="forward.success" path="queryDefinitionDataList.main" />
+	</action>
+
+	<action path="/QueryDefinitionList" input="queryDefinition.main" name="queryDefinitionForm" attribute="queryDefinitionForm" validate="false" 
+		type="com.dataprocess.bods.web.action.QueryDefinitionAction">
+		<forward name="forward.success" path="QueryDefinitionList.main" />
+	</action>
+
+	<action path="/FetchQueryDefinitionDetails" input="queryDefinition.main" name="queryDefinitionForm" attribute="queryDefinitionForm" validate="false" 
+		type="com.dataprocess.bods.web.action.QueryDefinitionAction">
+		<forward name="forward.success" path="queryDefinition.main" />
+		<forward name="forward.failure" path="QueryDefinitionList.main" />
+	</action>
+	
+	<!-- Configurator -->
+	<action path="/ConfiguratorLaunch" name="configuratorForm" attribute="configuratorForm" validate="false" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="configuratorLaunch.main"/>
+	</action>
+	
+	<action path="/ConfiguratorColumnDefinition" name="configuratorForm" attribute="configuratorForm" input="configuratorLaunch.main" validate="false" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="configuratorColumnDefinition.main"/>
+	</action>
+	
+	<!-- Instance Details -->
+	<action path="/InstanceDetailsForm" name="instanceDetailsForm" attribute="instanceDetailsForm" validate="false" type="com.dataprocess.bods.web.action.InstanceDetailsAction">
+		<forward name="forward.success" path="instanceDetailsForm.main"/>
+	</action>
+	
+	<action path="/InstanceDetailsAction" name="instanceDetailsForm" attribute="instanceDetailsForm" input="instanceDetailsForm.main" validate="false" type="com.dataprocess.bods.web.action.InstanceDetailsAction">
+		<forward name="forward.success" path="instanceDetailsForm.main"/>
+	</action>
+	
+	<!-- Configurator -->
+	<action path="/ConfiguratorLaunch" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="configuratorLaunch.main"/>
+	</action>
+	
+	<action path="/ConfiguratorColumnDefinition" name="configuratorForm" attribute="configuratorForm" input="configuratorLaunch.main" validate="false" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="configuratorColumnDefinition.main"/>
+	</action>
+	
+	<action path="/InterfaceColumnMapping" name="configuratorForm" attribute="configuratorForm" input="configuratorLaunch.main" validate="false" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="interfaceColumnMapping.main"/>
+	</action>
+	
+	<action path="/ConfiguratorSaveMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="configuratorColumnDefinition.main"/>
+	</action>
+	
+	<action path="/ConfiguratorExecuteMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="configuratorColumnDefinition.main"/>
+	</action>
+	
+	<!-- Validation Process -->
+	<action path="/ValidationLaunch" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="validationLaunch.main"/>
+	</action>
+	
+	<action path="/ValidationSaveMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="validationLaunch.main"/>
+	</action>
+	
+	<action path="/QueryValidationMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+	</action>
+	
+	
+	<!-- Interface Column Mapping -->
+	<action path="/TargetColumnMappingLaunch" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="targetColumnMapping.main"/>
+	</action>
+	
+	<action path="/TargetColumnMappingAction" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="validationLaunch.main"/>
+	</action>
+	
+	<action path="/GetTargetTableColumnMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+	</action>
+	
+	<action path="/ConfiguratorSaveAction" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="validationLaunch.main"/>
+	</action>
+		
+</action-mappings>
+
+<controller processorClass="org.apache.struts.tiles.TilesRequestProcessor"/>
+
+<plug-in className="org.apache.struts.tiles.TilesPlugin" >
+        <set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml" />
+        <set-property property="moduleAware" value="false" />
+</plug-in>
+
+</struts-config>

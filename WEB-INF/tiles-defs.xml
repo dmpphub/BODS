@@ -1,0 +1,271 @@
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://struts.apache.org/dtds/tiles-config_1_3.dtd">
+				
+<tiles-definitions>
+	
+	<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+	
+	<!-- Base Tile Definition -->
+    <definition name="bodsbase.main" path="/jsp/base/BODSBase.jsp">
+        <put name="page.head"         value="bodsbase.main.html.head"/>
+        <put name="page.menu"    	value="bodsbase.main.menu"/>
+        <put name="page.body"         value="bodsbase.main.body"/>
+        <put name="page.footer"       value="bodsbase.main.footer"/>
+    </definition>
+
+	<!-- Base Header Definition -->
+	<definition name="bodsbase.main.html.head" path="/jsp/base/Header.jsp">
+    </definition>
+
+	<!-- Base Menu Definition -->
+	<definition name="bodsbase.main.menu" path="/jsp/base/Menu.jsp">
+    </definition>
+    
+    <!-- Base Body Definition -->
+    <definition name="bodsbase.main.body" path="/jsp/base/Body.jsp">
+    	<put name="content" value=""/>
+    </definition>
+    
+    <!-- Base Footer Definition -->
+    <definition name="bodsbase.main.footer" path="/jsp/base/Footer.jsp">
+    </definition>
+    
+    <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    
+    <definition name="home.main" extends="bodsbase.main">
+        <put name="page.head" value="home.html.head"/>
+        <put name="page.menu" value="home.menu"/>
+        <put name="page.body" value="home.body"/>
+    </definition>
+	
+	<definition name="home.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="home.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="home.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/home.jsp"/>
+	</definition>
+	
+	<definition name="home.footer" extends="bodsbase.main.footer">
+	</definition>
+    
+    <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    
+    <definition name="configuratorLaunch.main" extends="bodsbase.main">
+    	<put name="page.head"         value="configuratorLaunch.html.head"/>
+        <put name="page.menu"    	  value="configuratorLaunch.menu"/>
+        <put name="page.body"         value="configuratorLaunch.body"/>
+        <put name="page.footer"       value="configuratorLaunch.footer"/>
+    </definition>
+    
+    <definition name="configuratorLaunch.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="configuratorLaunch.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="configuratorLaunch.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/configurator/ConfiguratorLaunch.jsp"/>
+	</definition>
+	
+	<definition name="configuratorLaunch.footer" extends="bodsbase.main.footer">
+	</definition>
+
+	<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    
+    <definition name="configuratorColumnDefinition.main" extends="bodsbase.main">
+    	<put name="page.head"         value="configuratorColumnDefinition.html.head"/>
+        <put name="page.menu"    	  value="configuratorColumnDefinition.menu"/>
+        <put name="page.body"         value="configuratorColumnDefinition.body"/>
+        <put name="page.footer"       value="configuratorColumnDefinition.footer"/>
+    </definition>
+    
+    <definition name="configuratorColumnDefinition.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="configuratorColumnDefinition.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="configuratorColumnDefinition.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/configurator/ConfiguratorColumnDefinition.jsp"/>
+	</definition>
+	
+	<definition name="configuratorColumnDefinition.footer" extends="bodsbase.main.footer">
+	</definition>
+
+		<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    
+    <definition name="queryDefinition.main" extends="bodsbase.main">
+    	<put name="page.head"         value="queryDefinition.html.head"/>
+        <put name="page.menu"    	  value="queryDefinition.menu"/>
+        <put name="page.body"         value="queryDefinition.body"/>
+        <put name="page.footer"       value="queryDefinition.footer"/>
+    </definition>
+    
+    <definition name="queryDefinition.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="queryDefinition.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="queryDefinition.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/sourceconfigurator/QueryDefinition.jsp"/>
+	</definition>
+	
+	<definition name="queryDefinition.footer" extends="bodsbase.main.footer">
+	</definition>
+
+
+    <definition name="queryColumnDefinition.main" extends="bodsbase.main">
+    	<put name="page.head"         value="queryColumnDefinition.html.head"/>
+        <put name="page.menu"    	  value="queryColumnDefinition.menu"/>
+        <put name="page.body"         value="queryColumnDefinition.body"/>
+        <put name="page.footer"       value="queryColumnDefinition.footer"/>
+    </definition>
+    
+    <definition name="queryColumnDefinition.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="queryColumnDefinition.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="queryColumnDefinition.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/sourceconfigurator/QueryColumnDefinition.jsp"/>
+	</definition>
+	
+	<definition name="queryColumnDefinition.footer" extends="bodsbase.main.footer">
+	</definition>
+
+
+    <definition name="queryDefinitionDataList.main" extends="bodsbase.main">
+    	<put name="page.head"         value="queryDefinitionDataList.html.head"/>
+        <put name="page.menu"    	  value="queryDefinitionDataList.menu"/>
+        <put name="page.body"         value="queryDefinitionDataList.body"/>
+        <put name="page.footer"       value="queryDefinitionDataList.footer"/>
+    </definition>
+    
+    <definition name="queryDefinitionDataList.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="queryDefinitionDataList.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="queryDefinitionDataList.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/sourceconfigurator/QueryDefinitionDataList.jsp"/>
+	</definition>
+	
+	<definition name="queryDefinitionDataList.footer" extends="bodsbase.main.footer">
+	</definition>
+
+
+    <definition name="QueryDefinitionList.main" extends="bodsbase.main">
+    	<put name="page.head"         value="QueryDefinitionList.html.head"/>
+        <put name="page.menu"    	  value="QueryDefinitionList.menu"/>
+        <put name="page.body"         value="QueryDefinitionList.body"/>
+        <put name="page.footer"       value="QueryDefinitionList.footer"/>
+    </definition>
+    
+    <definition name="QueryDefinitionList.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="QueryDefinitionList.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="QueryDefinitionList.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/sourceconfigurator/SourceConfiguratorList.jsp"/>
+	</definition>
+	
+	<definition name="QueryDefinitionList.footer" extends="bodsbase.main.footer">
+	</definition>
+
+	<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    
+    <definition name="instanceDetailsForm.main" extends="bodsbase.main">
+    	<put name="page.head"         value="instanceDetailsForm.html.head"/>
+        <put name="page.menu"    	  value="instanceDetailsForm.menu"/>
+        <put name="page.body"         value="instanceDetailsForm.body"/>
+        <put name="page.footer"       value="instanceDetailsForm.footer"/>
+    </definition>
+    
+    <definition name="instanceDetailsForm.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="instanceDetailsForm.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="instanceDetailsForm.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/instance/InstanceDetails.jsp"/>
+	</definition>
+	
+	<definition name="instanceDetailsForm.footer" extends="bodsbase.main.footer">
+	</definition>
+
+	<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+	 <definition name="interfaceColumnMapping.main" extends="bodsbase.main">
+    	<put name="page.head"         value="interfaceColumnMapping.html.head"/>
+        <put name="page.menu"    	  value="interfaceColumnMapping.menu"/>
+        <put name="page.body"         value="interfaceColumnMapping.body"/>
+        <put name="page.footer"       value="interfaceColumnMapping.footer"/>
+    </definition>
+    
+    <definition name="interfaceColumnMapping.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="interfaceColumnMapping.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="interfaceColumnMapping.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/configurator/InterfaceTableColumnDefinition.jsp"/>
+	</definition>
+	
+	<definition name="interfaceColumnMapping.footer" extends="bodsbase.main.footer"/>
+	
+	<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+	 <definition name="validationLaunch.main" extends="bodsbase.main">
+    	<put name="page.head"         value="validationLaunch.html.head"/>
+        <put name="page.menu"    	  value="validationLaunch.menu"/>
+        <put name="page.body"         value="validationLaunch.body"/>
+        <put name="page.footer"       value="validationLaunch.footer"/>
+    </definition>
+    
+    <definition name="validationLaunch.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="validationLaunch.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="validationLaunch.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/configurator/ValidationLaunch.jsp"/>
+	</definition>
+	
+	<definition name="validationLaunch.footer" extends="bodsbase.main.footer"/>
+	
+	
+	<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+	 <definition name="targetColumnMapping.main" extends="bodsbase.main">
+    	<put name="page.head"         value="targetColumnMapping.html.head"/>
+        <put name="page.menu"    	  value="targetColumnMapping.menu"/>
+        <put name="page.body"         value="targetColumnMapping.body"/>
+        <put name="page.footer"       value="targetColumnMapping.footer"/>
+    </definition>
+    
+    <definition name="targetColumnMapping.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="targetColumnMapping.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="targetColumnMapping.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/configurator/TargetColumnMappingLaunch.jsp"/>
+	</definition>
+	
+	<definition name="targetColumnMapping.footer" extends="bodsbase.main.footer"/>
+	
+	
+</tiles-definitions>
