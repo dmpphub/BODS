@@ -64,7 +64,7 @@
 
 	<action path="/QueryDefinitionSaveAction" input="queryDefinition.main" name="queryDefinitionForm" attribute="queryDefinitionForm" validate="false" 
 		type="com.dataprocess.bods.web.action.QueryDefinitionAction">
-		<forward name="forward.success" path="queryDefinitionDataList.main" />
+		<forward name="forward.success" path="queryColumnDefinition.main" />
 	</action>
 
 	<action path="/QueryDefinitionList" input="queryDefinition.main" name="queryDefinitionForm" attribute="queryDefinitionForm" validate="false" 

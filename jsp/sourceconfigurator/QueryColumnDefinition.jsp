@@ -1,4 +1,9 @@
 <%@ taglib uri="struts-html" prefix="html"%><%@ taglib uri="struts-bean" prefix="bean"%><%@ taglib uri="struts-nested" prefix="nested"%>
+<script>
+	function doNextProcess() {
+		location.href = '/bods/QueryDefinitionDataList.etl';
+	}
+</script>
 <html:html>
 <head>
 <link href="css/basepagemaker.css" rel='stylesheet' type='text/css' />
@@ -92,7 +97,10 @@
 </nested:root>
 </html:html>
 <script>
-	if (document.getElementById('saveFlag').value == 'Y') {
+	if (document.getElementById('sourceConfigNameId').value > 0) {
 		$("a").removeClass("disabled");
+	}
+	if (document.getElementById('sourceConfigNameId').value > 0) {
+		$('.btn.waves-effect.waves-light').addClass('disabled');
 	}
 </script>

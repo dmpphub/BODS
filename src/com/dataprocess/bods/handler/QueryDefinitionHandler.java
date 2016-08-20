@@ -66,7 +66,7 @@ public class QueryDefinitionHandler {
 		
 		try {
 			business = new QueryDefinitionBusiness();
-			business.fetchQueryDefinitionDetails(queryDefinitionVO);
+			queryDefinitionVO = business.fetchQueryDefinitionDetails(queryDefinitionVO);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
