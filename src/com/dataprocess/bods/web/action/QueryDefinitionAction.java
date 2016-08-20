@@ -54,7 +54,10 @@ public class QueryDefinitionAction extends Action {
 		} else if (mapping.getPath().equals("/QueryDefinitionSaveAction")) {
 			QueryDefinitionForm queryDefinitionForm = (QueryDefinitionForm) form;
 			QueryDefinitionHandler queryDefinitionHandler = new QueryDefinitionHandler();
-			hasCompleted = queryDefinitionHandler.saveQueryDefinition(queryDefinitionForm.getQueryDefinitionVO());
+			QueryDefinitionVO queryDefinitionVO = null;
+			queryDefinitionVO = queryDefinitionHandler.saveQueryDefinition(queryDefinitionForm.getQueryDefinitionVO());
+			queryDefinitionForm.setQueryDefinitionVO(queryDefinitionVO);
+			
 			forwardName = "forward.success";
 			
 		} else if (mapping.getPath().equals("/QueryDefinitionList")) {

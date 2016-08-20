@@ -31,6 +31,7 @@
 								property="sourceConfigName" />
 							<nested:hidden styleId="sourceConfigNameId"
 								property="sourceConfigNameId" />
+							<nested:hidden styleId="sourceConfiguratorId" property="sourceConfiguratorId" />	
 							<nested:hidden styleId="saveFlag" property="saveFlag" />
 						</div>
 					</div>
@@ -97,10 +98,10 @@
 </nested:root>
 </html:html>
 <script>
-	if (document.getElementById('sourceConfigNameId').value > 0) {
+	if (document.getElementById('sourceConfiguratorId').value > 0) {
 		$("a").removeClass("disabled");
 	}
-	if (document.getElementById('sourceConfigNameId').value > 0) {
+	if (document.getElementById('sourceConfiguratorId').value > 0) {
 		$('.btn.waves-effect.waves-light').addClass('disabled');
 	}
 </script>

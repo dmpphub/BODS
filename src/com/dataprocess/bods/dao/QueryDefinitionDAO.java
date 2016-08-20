@@ -136,15 +136,14 @@ public final class QueryDefinitionDAO {
 		return hasValidated;
 	}
 
-	public boolean saveQueryDefinition(QueryDefinitionEO queryDefinitionEO) {
-		boolean hasCompleted = false;
+	public QueryDefinitionEO saveQueryDefinition(QueryDefinitionEO queryDefinitionEO) {
 		Session session = null;
 		Transaction transaction = null;
 		
 		try {
 			session = HibernateSessionManager.getHibernateSession();
 			transaction = session.beginTransaction();
-			session.merge(queryDefinitionEO);
+			queryDefinitionEO = (QueryDefinitionEO) session.merge(queryDefinitionEO);
 			transaction.commit();
 
 		} catch (Exception e) {
@@ -154,7 +153,7 @@ public final class QueryDefinitionDAO {
 		} finally {
 			session.close();
 		}
-		return hasCompleted;
+		return queryDefinitionEO;
 	}
 
 	public ArrayList<QueryDefinitionVO> getSourceConfigConnectionList() {
