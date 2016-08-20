@@ -108,15 +108,24 @@ public final class ConfiguratorProcedureCreation {
                     procedureContent.append("WHEN OTHERS THEN");
                     procedureContent.append("L_MERGE_ERR_MSG := SQLERRM; \n");
                     procedureContent.append("UPDATE ##STAGING_TABLE## SET ##PV_COLUMN_SEQNO## = 'E' \n");
-                    procedureContent.append("WHERE EXECUTION_ID      = ##EXECUTION_ID## ;");
-                    procedureContent.append("COMMIT;\n END;\n");
-                    procedureContent.append("L_ERROR_COUNT := ##TOTAL_COUNT## - L_SUCCESS_COUNT; \n");
-                    procedureContent.append("SELECT TO_TIMESTAMP(SYSDATE, 'DD-MON-YYYY HH:MI:SS AM') \n");
-                    procedureContent.append("INTO L_END_TIME FROM DUAL;");
-
+                    procedureContent.append("WHERE EXECUTION_ID = ##EXECUTION_ID## ;");
+                    procedureContent.append("END;\n");
+                    procedureContent.append("UPDATE ##PV_STAGING_TABLE## \n");
+                    procedureContent.append("SET SUCCESS_COUNT = NVL(SUCCESS_COUNT,0) + L_SUCCESS_COUNT, \n");
+                    procedureContent.append("END_TIME = (SELECT TO_CHAR(SYSDATE, 'DD-MON-YYYY HH:MI:SS AM') \n");
+                    procedureContent.append("FROM DUAL),ERROR_MESSAGE = SUBSTR (L_MERGE_ERR_MSG , 1, 400), \n");
+                    procedureContent.append("ERROR_COUNT = CASE WHEN (ERROR_COUNT = 0 OR ERROR_COUNT IS NULL) THEN L_ERROR_COUNT \n");
+                    procedureContent.append("ELSE NVL(ERROR_COUNT,0) - L_SUCCESS_COUNT  END \n");
+                    procedureContent.append("WHERE PV_SEQ_ORDER_NO = '##PV_COLUMN_SEQNO##' AND EXECUTION_ID = ##EXECUTION_ID## ;\n");
+                    procedureContent.append("EXCEPTION WHEN OTHERS THEN ERR_MSG := SQLERRM;");
+                    procedureContent.append("UPDATE ##STAGING_TABLE## SET STATUS_CODE = 'E',##PV_COLUMN_SEQNO## = SUBSTR(ERR_MSG, 1, 200); ");
+                    procedureContent.append("END;");
+                    procedureContent.append("UPDATE ##PV_STAGING_TABLE## SET END_TIME = \n");
+                    procedureContent.append("(SELECT TO_CHAR(SYSTIMESTAMP, 'DD-MON-YYYY HH:MI:SS.FF AM') FROM DUAL) \n");
+                    procedureContent.append("WHERE PV_SEQ_ORDER_NO = ##PV_COLUMN_SEQNO## AND END_TIME IS NULL ;");  
+                    procedureContent.append("COMMIT;");
                 }
             }
-
         } catch (Exception exception) {
             throw new BODSException("ConfiguratorProcedureCreation", "buildValidationMergeBlock",
                 exception.getMessage());
@@ -191,7 +200,7 @@ public final class ConfiguratorProcedureCreation {
             procedureContent.append(" FOR CUR_BODS IN BODS \n");
             procedureContent.append(" LOOP \n");
             for (ConfiguratorInterfaceColumnVO configuratorInterfaceColumnVO : configuratorInterfaceColumnVOList) {
-                if ("Y".equalsIgnoreCase(configuratorInterfaceColumnVO.getMappedColumnFlag())) {
+                if (configuratorInterfaceColumnVO != null && configuratorInterfaceColumnVO.getMappedColumnFlag() != null && "Y".equalsIgnoreCase(configuratorInterfaceColumnVO.getMappedColumnFlag())) {
                     if (curIndex == 0) {
                         interfaceTableName = configuratorInterfaceColumnVO.getTableName();
                         columnName += configuratorInterfaceColumnVO.getColumnName();

@@ -39,6 +39,7 @@ public final class ConfiguratorAction extends Action {
         ConfiguratorForm configuratorForm = (ConfiguratorForm) form;
         ConfiguratorHandler configuratorHandler = null;
         ConfiguratorVO configuratorVO = null;
+        ConfiguratorValidationVO configuratorValidationVO = null;
         List<ConfiguratorValidationVO> configuratorValidationVOList = null;
         PrintWriter printWriter = null;
 
@@ -77,8 +78,10 @@ public final class ConfiguratorAction extends Action {
             configuratorHandler.saveConfiguratorDetails(configuratorVO);
         } else if (mapping.getPath().equals("/ValidationLaunch")) {
             configuratorHandler = new ConfiguratorHandler();
-            configuratorForm.getConfiguratorVO().getConfiguratorValidationVO().setActive("Y");
-            configuratorForm.getConfiguratorVO().getConfiguratorValidationVO().setValidationInference("Success");
+            configuratorValidationVO = new ConfiguratorValidationVO();
+            configuratorValidationVO.setActive("Y");
+            configuratorValidationVO.setValidationInference("Error");
+            configuratorForm.getConfiguratorVO().setConfiguratorValidationVO(configuratorValidationVO);
         } else if (mapping.getPath().equals("/QueryValidationMapping")) {
             String query = request.getParameter("query").toString();
             configuratorHandler = new ConfiguratorHandler();
@@ -103,7 +106,7 @@ public final class ConfiguratorAction extends Action {
             }
             configuratorVO.setConfiguratorValidationVOList(configuratorValidationVOList);
             configuratorForm.setConfiguratorVO(configuratorVO);
-        } else if(mapping.getPath().equals("/ConfiguratorSaveAction")) {
+        } else if (mapping.getPath().equals("/ConfiguratorSaveAction")) {
             configuratorHandler = new ConfiguratorHandler();
             configuratorVO = configuratorForm.getConfiguratorVO();
             configuratorHandler.saveConfiguratorDetails(configuratorVO);
@@ -112,8 +115,8 @@ public final class ConfiguratorAction extends Action {
             int configuratorId = Integer.parseInt(request.getParameter("configuratorId"));
             configuratorHandler = new ConfiguratorHandler();
             configuratorHandler.execute(configuratorId, configuratorConnId);
-        } else if(mapping.getPath().equals("/PrevalidationProcessLaunch")) {
-            
+        } else if (mapping.getPath().equals("/PrevalidationProcessLaunch")) {
+
         }
         return mapping.findForward(forwardName);
     }

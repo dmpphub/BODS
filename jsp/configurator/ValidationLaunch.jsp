@@ -3,13 +3,18 @@
 <%@ taglib uri="struts-nested" prefix="nested"%>
 
 <script>
-	var queryColumnNameArr;
-	var configuratorColumnVOArr;
+	var queryColumnNameArr ='';
+	var configuratorColumnVOArr = '';
 	var conditionArr = '';
 	var conversionArr = '';
 	
 	function callSubmit() {
 		document.configuratorForm.action='/bods/ValidationSaveMapping.etl';
+		document.configuratorForm.submit();
+	}
+	
+	function callNew() {
+		document.configuratorForm.action='/bods/ValidationLaunch.etl';
 		document.configuratorForm.submit();
 	}
 	
@@ -37,6 +42,12 @@
 			}
 		})
 	});
+	
+	function onLoadForm() {
+		if($('#validationInferenceId').val() == 'Error') {
+			$('#conversionBlock').hide();
+		}
+	}
 	
 	function getLeftExprValue() {
 		var selectVal = $('#leftExpressionType').val();
@@ -74,6 +85,7 @@
 		    		 var conditionVO = $.parseJSON(data);
 			    	 queryColumnNameArr = conditionVO.configuratorVO.queryColumnNameList;
 			    	 configuratorColumnVOArr = conditionVO.configuratorVO.configuratorColumnVOList;
+			    	 resetConditionDropDown();
 			    	 //dynamicQueryColumnFormation();
 			    	 //dynamicConfiguratorColumnFormation();
 		    	 }
@@ -96,13 +108,15 @@
 			opts = queryColumnNameArr;
 		}
 		if(opts != '') {
-			leftExpressionObject +='<option value="--Select--">--Select--</option>';
+			leftExpressionObject +='<option value="">--Select--</option>';
 			for(var i=0; i < opts[0].length;i++) {
 				leftExpressionObject += '<option value="' + opts[0][i] + ' ">' + opts[0][i] + '</option>';
 			}
 			leftExpressionObject += '</select>'
 			currentDivObject.append(leftExpressionObject);
-		} 
+		} else {
+			alert('Parse the Query before select it. ');
+		}
 	} 
 
 	function dynamicConfiguratorColumnFormation() {
@@ -111,13 +125,15 @@
 		var rightExpressionObject = '<select id=\"rightExpressionValue\" name=\"rightExpressionValue\" style=\"width: 150px;margin-left: -71px;\">';
 		var opts = [];
 		if(configuratorColumnVOArr != '') {
-			rightExpressionObject +='<option value="--Select--">--Select--</option>';
+			rightExpressionObject +='<option value="">--Select--</option>';
 			for(var i=0; i < configuratorColumnVOArr[0].length;i++) {
 				rightExpressionObject += '<option value="' + configuratorColumnVOArr[0][i].columnName + ' ">' + configuratorColumnVOArr[0][i].columnName + '</option>';
 			}
 			rightExpressionObject += '</select>'
 			currentDivObject.append(rightExpressionObject);
-		} 
+		} else {
+			alert('Parse the Query before select it. ');
+		}
 	}
 	
 	function dynamicConversionLeftColumn() {
@@ -131,13 +147,15 @@
 			opts = queryColumnNameArr;
 		}
 		if(opts != '') {
-			leftExpressionObject +='<option value="--Select--">--Select--</option>';
+			leftExpressionObject +='<option value="">--Select--</option>';
 			for(var i=0; i < opts[0].length;i++) {
 				leftExpressionObject += '<option value="' + opts[0][i] + ' ">' + opts[0][i] + '</option>';
 			}
 			leftExpressionObject += '</select>'
 			currentDivObject.append(leftExpressionObject);
-		} 
+		} else {
+			alert('Parse the Query before select it. ');
+		}
 	}
 	
 	function dynamicConversionRightColumn() {
@@ -146,22 +164,27 @@
 		var rightExpressionObject = '<select id=\"rightExpressionConversionValue\" name=\"rightExpressionConversionValue\" style=\"width: 150px;margin-left: -71px;\">';
 		var opts = [];
 		if(configuratorColumnVOArr != '') {
-			rightExpressionObject += '<option value="--Select--">--Select--</option>';
+			rightExpressionObject += '<option value="">--Select--</option>';
 			for(var i=0; i < configuratorColumnVOArr[0].length;i++) {
 				rightExpressionObject += '<option value="' + configuratorColumnVOArr[0][i].columnName + ' ">' + configuratorColumnVOArr[0][i].columnName + '</option>';
 			}
 			rightExpressionObject += '</select>'
 			currentDivObject.append(rightExpressionObject);
-		} 
+		} else {
+			alert('Parse the Query before select it. ');
+		}
 	}
 	
 	function addCondition() {
 		if(conditionArr == '') {
 			conditionArr = conditionStr();
 		} else {
+			conditionArr = '';
 			conditionArr += conditionStr();
 		}
+		$('#condtStrId').val('');
 		$('#condtStrId').val(conditionArr);
+		resetConditionDropDown();
 	}
 	
 	function conversionCondition() {
@@ -182,13 +205,23 @@
 	}
 	
 	function conditionStr() {
-		var cont = '';
-		if($('#leftExpressionType').val() == 'Query' && $('#rightExpressionType').val() != '' && $('#rightExpressionValue').val() !='' && $('#leftExpressionValue').val() != '') {
-			cont =  "STGTBL." + $('#rightExpressionValue').val() +   $('#operator option:selected').val()  +  "PVQUERY." + $('#leftExpressionValue').val();
-		} else {
-			cont = "PVQUERY." + $('#leftExpressionValue').val() +  $('#operator option:selected').val();
-		}
+		var cont = $('#condtStrId').val();
+		if($('#leftExpressionType').val() == 'Query' && $('#rightExpressionType').val() != '' && 
+				($('#operator option:selected').val() !='IS NULL' && $('#operator option:selected').val() != 'IS NOT NULL') && $('#rightExpressionValue').val() !='' && $('#leftExpressionValue').val() != '') {
+			cont +=  "STGTBL." + $('#rightExpressionValue').val() +   $('#operator option:selected').val()  +  "PVQUERY." + $('#leftExpressionValue').val();
+		} else if($('#leftExpressionType').val() == 'Query' && $('#leftExpressionValue').val() != '' && $('#operator option:selected').val() != '' && 
+				($('#operator option:selected').val() =='IS NULL' || $('#operator option:selected').val() == 'IS NOT NULL')) {
+			cont += "PVQUERY." + $('#leftExpressionValue').val() +  $('#operator option:selected').val();
+		} 
 		return cont;
+	}
+	
+	function resetConditionDropDown() {
+		$('#leftExpressionType').val('');
+		$('#rightExpressionType').val('');
+		$('#rightExpressionValue').val('');
+		$('#leftExpressionValue').val('');
+		$('#operator').val('');
 	}
 </script>
 <html:html>
@@ -198,6 +231,7 @@
 	<nested:root name="configuratorForm">
 		<html:form styleId="configuratorForm1">
 			<nested:nest property="configuratorVO">
+				<nested:define id="configColumnDefListId" property="configuratorColumnDefinitionVOList" />
 				<nested:nest property="configuratorValidationVO">
 					<div id="pageContentDivId" style="visibility:visible;height:400px;width:100%;overflow-y: scroll;position:relative">
 						<div class="div-table">
@@ -206,7 +240,11 @@
 									<span> Validation Name </span>
 								</div>
 								<div class="div-table-col">
-									<nested:text property="name"/>
+									<nested:select styleId="validateName" property="name">
+										<html:option value="">--Select--</html:option>
+										<html:options collection="configColumnDefListId" property="columnName" labelProperty="columnName" />
+									</nested:select>
+									<nested:hidden property="name" />
 								</div>
 								<div class="div-table-col">
 									<span> Display Name </span>
@@ -223,6 +261,7 @@
 								<div class="div-table-col">
 									<nested:radio property="validationInference" value="Success" styleId="successId"> &nbsp; Success </nested:radio> &nbsp;
 									<nested:radio property="validationInference" value="Error" styleId="errorId"> &nbsp; Error </nested:radio>
+									<nested:hidden property="validationInference" styleId="validationInferenceId"/>
 								</div>
 								<div class="div-table-col" style="margin-left: 108px;">
 										<span> Active </span>
@@ -263,8 +302,8 @@
 									<div class="div-table-col">
 											<nested:select styleId="operator" property="operator" style="width: 150px;margin-left: -143px;">
 											<html:option value="">--Select--</html:option>
-											<html:option value=" IS NULL ">IS NULL</html:option>
-											<html:option value=" IS NOT NULL ">IS NOT NULL</html:option>
+											<html:option value="IS NULL">IS NULL</html:option>
+											<html:option value="IS NOT NULL">IS NOT NULL</html:option>
 											<html:option value=" IN ">IN</html:option>
 											<html:option value=" != ">!=</html:option>
 											<html:option value=" = ">=</html:option>
@@ -362,6 +401,7 @@
 							</div>
 						</div>
 						<center>
+							<button class="btn waves-effect waves-light" type="button" onclick="callNew()">New</button> &nbsp; &nbsp;
 							<button class="btn waves-effect waves-light" type="submit" onclick="callSubmit()">Save</button> &nbsp; &nbsp;
 							<button class="btn waves-effect waves-light" type="button" onclick="doNextProcess()">Next</button>
 						</center> &nbsp;
@@ -370,4 +410,7 @@
 			</nested:nest>
 		</html:form>
 	</nested:root>
+	<script>
+			onLoadForm();
+		</script>
 </html:html>

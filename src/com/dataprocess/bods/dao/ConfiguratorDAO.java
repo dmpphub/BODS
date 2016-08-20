@@ -21,7 +21,9 @@ import com.dataprocess.bods.util.connectionutil.TargetSchemaConnection;
 import com.dataprocess.bods.vo.ConcurrentParameterVO;
 import com.dataprocess.bods.vo.ConfiguratorInterfaceColumnVO;
 import com.dataprocess.bods.vo.ConfiguratorVO;
+import com.dataprocess.bods.vo.ConfiguratorValidationVO;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ConfiguratorDAO.
  */
@@ -82,23 +84,20 @@ public final class ConfiguratorDAO {
             configuratorConnection = targetSchemaConnection.getTargetSchemaConnection(configuratorConnectionId);
             preparedStatement = configuratorConnection.prepareStatement(query);
             resultSet = preparedStatement.executeQuery();
-            /*if (resultSet.next()) {*/
-                resultSetMetaData = resultSet.getMetaData();
-                for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
-                    columnName = resultSetMetaData.getColumnName(i);
-                    dataType = resultSetMetaData.getColumnTypeName(i);
-                    if (dataType != null
-                        && (dataType.equalsIgnoreCase("VARCHAR2") || dataType.equalsIgnoreCase("VARCHAR") || dataType
-                            .equalsIgnoreCase("CHAR"))) {
-                        dataType = "STRING";
-                    }
-                    configuratorInterfaceColumnVO = new ConfiguratorInterfaceColumnVO();
-                    configuratorInterfaceColumnVO.setTableName(interfaceTableName);
-                    configuratorInterfaceColumnVO.setColumnName(columnName);
-                    configuratorInterfaceColumnVOList.add(configuratorInterfaceColumnVO);
+            resultSetMetaData = resultSet.getMetaData();
+            for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
+                columnName = resultSetMetaData.getColumnName(i);
+                dataType = resultSetMetaData.getColumnTypeName(i);
+                if (dataType != null
+                    && (dataType.equalsIgnoreCase("VARCHAR2") || dataType.equalsIgnoreCase("VARCHAR") || dataType
+                        .equalsIgnoreCase("CHAR"))) {
+                    dataType = "STRING";
                 }
-            //}
-
+                configuratorInterfaceColumnVO = new ConfiguratorInterfaceColumnVO();
+                configuratorInterfaceColumnVO.setTableName(interfaceTableName);
+                configuratorInterfaceColumnVO.setColumnName(columnName);
+                configuratorInterfaceColumnVOList.add(configuratorInterfaceColumnVO);
+            }
         } catch (Exception exception) {
             throw new BODSException("ConfiguratorDAO", "getSourceConfigurator", exception.getMessage());
         } finally {
@@ -317,6 +316,7 @@ public final class ConfiguratorDAO {
      *
      * @param configuratorEO the configurator eo
      * @return the configurator eo
+     * @throws BODSException the bODS exception
      */
     public ConfiguratorEO saveConfiguratorDetails(ConfiguratorEO configuratorEO) throws BODSException {
         Session session = null;
@@ -337,21 +337,19 @@ public final class ConfiguratorDAO {
 
     /**
      * Creates the staging table.
-     * 
-     * @param targetConnectionId the target connection id
+     *
+     * @param connection the connection
      * @param tableScripts the table scripts
      * @param stagingTableName the staging table name
      * @throws BODSException the bODS exception
      */
-    public void createStagingTable(int targetConnectionId, String tableScripts, String stagingTableName)
+    public void createStagingTable(Connection connection, String tableScripts, String stagingTableName)
         throws BODSException {
         TargetSchemaConnection targetSchemaConnection = null;
-        Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
             targetSchemaConnection = new TargetSchemaConnection();
-            connection = targetSchemaConnection.getTargetSchemaConnection(targetConnectionId);
             dropTableIfExists(stagingTableName, connection, targetSchemaConnection);
             preparedStatement = connection.prepareStatement(tableScripts);
             resultSet = preparedStatement.executeQuery();
@@ -360,7 +358,89 @@ public final class ConfiguratorDAO {
         } catch (Exception exception) {
             throw new BODSException("ConfiguratorDAO", "createStagingTable", exception.getMessage());
         } finally {
-            targetSchemaConnection.targetSchemaClose(connection, preparedStatement, resultSet, null);
+            targetSchemaConnection.targetSchemaClose(null, preparedStatement, resultSet, null);
+        }
+    }
+
+    /**
+     * Creates the prevalidation table.
+     *
+     * @param connection the connection
+     * @param tableScripts the table scripts
+     * @param pvTableName the pv table name
+     * @throws BODSException the bODS exception
+     */
+    public void createPrevalidationTable(Connection connection, String tableScripts, String pvTableName)
+        throws BODSException {
+        TargetSchemaConnection targetSchemaConnection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            targetSchemaConnection = new TargetSchemaConnection();
+            dropTableIfExists(pvTableName, connection, targetSchemaConnection);
+            preparedStatement = connection.prepareStatement(tableScripts);
+            resultSet = preparedStatement.executeQuery();
+        } catch (BODSException bodsException) {
+            throw bodsException;
+        } catch (Exception exception) {
+            throw new BODSException("ConfiguratorDAO", "createPrevalidationTable", exception.getMessage());
+        } finally {
+            targetSchemaConnection.targetSchemaClose(null, preparedStatement, resultSet, null);
+        }
+    }
+
+    /**
+     * Insert prevalidation values.
+     *
+     * @throws BODSException the bODS exception
+     */
+    public void insertPrevalidationValues(Connection connection, String pvTableName, ConfiguratorVO configuratorVO)
+        throws BODSException {
+        int index = 0;
+        int count = 1;
+        StringBuffer insertQueryFormation = null;
+        PreparedStatement preparedStatement = null;
+        TargetSchemaConnection targetSchemaConnection = null;
+        List<ConfiguratorValidationVO> configuratorValidationVOList;
+        try {
+            insertQueryFormation = new StringBuffer();
+            targetSchemaConnection = new TargetSchemaConnection();
+            configuratorValidationVOList = configuratorVO.getConfiguratorValidationVOList();
+            insertQueryFormation.append(" INSERT INTO " + pvTableName + "(PV_SEQ_ID, EXECUTION_ID, ");
+            insertQueryFormation.append(" CONFIGURATOR_ID, PV_SEQ_ORDER_NO, PV_TYPE, PV_ATTRIBUTE,");
+            insertQueryFormation.append(" SUCCESS_MESSAGE, ERROR_MESSAGE, SUCCESS_COUNT, ERROR_COUNT,");
+            insertQueryFormation.append(" START_TIME,END_TIME) VALUES ");
+            insertQueryFormation.append(" (?,?,?,?,?,?,?,?,?,?,?,?) ");
+            preparedStatement = connection.prepareStatement(insertQueryFormation.toString());
+            for (ConfiguratorValidationVO configuratorValidationVO : configuratorValidationVOList) {
+                index = 0;
+                preparedStatement.setInt(++index, count);
+                preparedStatement.setInt(++index, 0);
+                preparedStatement.setInt(++index, configuratorVO.getConfiguratorId());
+                preparedStatement.setString(++index, "PV_" + count);
+                preparedStatement.setString(++index, "M");
+                preparedStatement.setString(++index, configuratorValidationVO.getName());
+                preparedStatement.setString(++index, configuratorValidationVO.getDisplayName());
+                preparedStatement.setString(++index, configuratorValidationVO.getValidationErrorMessage());
+                preparedStatement.setInt(++index, 0);
+                preparedStatement.setInt(++index, 0);
+                preparedStatement.setString(++index, "");
+                preparedStatement.setString(++index, "");
+                preparedStatement.addBatch();
+                count++;
+                if (count % 50 == 0) {
+                    preparedStatement.executeBatch();
+                    preparedStatement.clearBatch();
+                }
+            }
+            if (count % 50 != 0) {
+                preparedStatement.executeBatch();
+                preparedStatement.clearBatch();
+            }
+        } catch (Exception exception) {
+            throw new BODSException("ConfiguratorDAO", "insertPrevalidationValues", exception.getMessage());
+        } finally {
+            targetSchemaConnection.targetSchemaClose(null, preparedStatement, null, null);
         }
     }
 
@@ -417,9 +497,10 @@ public final class ConfiguratorDAO {
 
     /**
      * Gets the extract query from db.
-     * 
+     *
      * @param sourceConfiguratorId the source configurator id
      * @return the extract query from db
+     * @throws BODSException the bODS exception
      */
     public String getExtractQueryFromDB(int sourceConfiguratorId) throws BODSException {
         String sourceQuery = "";

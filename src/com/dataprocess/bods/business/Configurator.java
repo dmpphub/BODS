@@ -118,23 +118,66 @@ public final class Configurator {
      * @param configuratorVO the configurator vo
      * @throws BODSException the bODS exception
      */
-    public void createStagingTable(ConfiguratorVO configuratorVO) throws BODSException {
+    public void createConfiguratorDynamicTable(ConfiguratorVO configuratorVO) throws BODSException {
         String stagingTableScript = "";
         String tableName = "";
+        String pvtableName = "";
+        Connection connection = null;
         ConfiguratorDAO configuratorDAO = null;
+        TargetSchemaConnection targetSchemaConnection = null;
         try {
             configuratorDAO = new ConfiguratorDAO();
+            targetSchemaConnection = new TargetSchemaConnection();
+            connection = targetSchemaConnection.getTargetSchemaConnection(configuratorVO.getConfiguratorConnectionId());
             tableName =
                 "STG_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorVO.getConfiguratorId();
+            pvtableName =
+                "PV_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorVO.getConfiguratorId();
             stagingTableScript = "CREATE TABLE " + tableName;
             stagingTableScript += getColumnList(configuratorVO.getConfiguratorColumnDefinitionVOList());
-            configuratorDAO.createStagingTable(configuratorVO.getConfiguratorConnectionId(), stagingTableScript,
-                tableName);
+            configuratorDAO.createStagingTable(connection, stagingTableScript, tableName);
+            stagingTableScript = "";
+            stagingTableScript += generatePVTableScripts(pvtableName);
+            configuratorDAO.createPrevalidationTable(connection, stagingTableScript, pvtableName);
+            configuratorDAO.insertPrevalidationValues(connection, pvtableName,configuratorVO);
         } catch (BODSException bodsException) {
             throw bodsException;
         } catch (Exception exception) {
-            throw new BODSException("Configurator", "getInterfaceTableColumnList", exception.getMessage());
+            throw new BODSException("Configurator", "createConfiguratorDynamicTable", exception.getMessage());
+        } finally {
+            targetSchemaConnection.targetSchemaClose(connection, null, null, null);
         }
+    }
+
+    /**
+     * Generate pv table scripts.
+     *
+     * @param pvStagingTable the pv staging table
+     * @param dataBastType the data bast type
+     * @return the string
+     * @throws BODSException the bODS exception
+     */
+    public String generatePVTableScripts(String pvStagingTable) throws BODSException {
+        StringBuffer pvTableScripts = null;
+        try {
+            pvTableScripts = new StringBuffer();
+            pvTableScripts.append(" CREATE TABLE " + pvStagingTable + "( ");
+            pvTableScripts.append(" PV_SEQ_ID NUMBER,");
+            pvTableScripts.append(" EXECUTION_ID NUMBER,");
+            pvTableScripts.append(" CONFIGURATOR_ID NUMBER,");
+            pvTableScripts.append(" PV_SEQ_ORDER_NO VARCHAR2(100),");
+            pvTableScripts.append(" PV_TYPE VARCHAR2(1),");
+            pvTableScripts.append(" PV_ATTRIBUTE VARCHAR2(100),");
+            pvTableScripts.append(" SUCCESS_MESSAGE VARCHAR2(500),");
+            pvTableScripts.append(" ERROR_MESSAGE VARCHAR2(500),");
+            pvTableScripts.append(" SUCCESS_COUNT NUMBER,");
+            pvTableScripts.append(" ERROR_COUNT NUMBER,");
+            pvTableScripts.append(" START_TIME TIMESTAMP,");
+            pvTableScripts.append(" END_TIME  TIMESTAMP )");
+        } catch (Exception exception) {
+            throw new BODSException("Configurator", "generatePVTableScripts", exception.getMessage());
+        }
+        return pvTableScripts.toString();
     }
 
     /**
@@ -149,6 +192,7 @@ public final class Configurator {
         int index = 0;
         String columnName = "";
         String finalColumnName = "";
+        String commonColumnName = "";
         try {
             for (ConfiguratorColumnDefinitionVO configuratorColumnDefinitionVO : configuratorColumnDefinitionVOList) {
                 if (index == 0) {
@@ -170,6 +214,9 @@ public final class Configurator {
                 }
                 index++;
             }
+            commonColumnName =
+                " , LINE_NO NUMBER, EXECUTION_ID NUMBER, CONFIGURATOR_ID NUMBER, STATUS_CODE VARCHAR2(3), DC_FLAG VARCHAR2(3)";
+            columnName += commonColumnName;
             finalColumnName = " ( " + columnName + " ) ";
         } catch (Exception exception) {
             throw new BODSException("Configurator", "getInterfaceTableColumnList", exception.getMessage());
@@ -220,6 +267,7 @@ public final class Configurator {
      * Gets the config connection list.
      *
      * @return the config connection list
+     * @throws BODSException the bODS exception
      */
     public ArrayList<ConfiguratorVO> getConfigConnectionList() throws BODSException {
         ConfiguratorDAO configuratorDAO = null;
@@ -239,6 +287,7 @@ public final class Configurator {
      * Gets the source config connection list.
      *
      * @return the source config connection list
+     * @throws BODSException the bODS exception
      */
     public ArrayList<ConfiguratorVO> getSourceConfigConnectionList() throws BODSException {
         ConfiguratorDAO configuratorDAO = null;
@@ -258,6 +307,7 @@ public final class Configurator {
      * Gets the source configuration name list.
      *
      * @return the source configuration name list
+     * @throws BODSException the bODS exception
      */
     public ArrayList<ConfiguratorVO> getSourceConfigurationNameList() throws BODSException {
         ConfiguratorDAO configuratorDAO = null;
@@ -277,6 +327,7 @@ public final class Configurator {
      * Save configurator details.
      *
      * @param configuratorVO the configurator vo
+     * @throws BODSException the bODS exception
      */
     public void saveConfiguratorDetails(ConfiguratorVO configuratorVO) throws BODSException {
         ConfiguratorDAO configuratorDAO = null;
@@ -300,7 +351,7 @@ public final class Configurator {
             configuratorEO = configuratorDAO.saveConfiguratorDetails(configuratorEO);
             if (configuratorEO.getConfiguratorId() > 0) {
                 configuratorVO.setConfiguratorId(configuratorEO.getConfiguratorId());
-                createStagingTable(configuratorVO);
+                createConfiguratorDynamicTable(configuratorVO);
             }
         } catch (BODSException bodsException) {
             throw bodsException;
