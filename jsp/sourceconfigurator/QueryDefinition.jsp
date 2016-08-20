@@ -126,7 +126,9 @@ input[type="text"], input[type="Password"], select {
 	if (document.getElementById('queryValidatedFlag').value == 'Y') {
 		$("a").removeClass("disabled");
 	}
-	
+	if (document.getElementById('sourceConfigNameId').value > 0) {
+		$(".btn.waves-effect.waves-light").addClass("disabled");
+	}
 	$('#sourceConfigConn').change(function() {
 		/* alert('text :' + $('#sourceConfigConn option:selected').html()); */
 		$('#sourceConfigConnection').val($('#sourceConfigConn option:selected').html());

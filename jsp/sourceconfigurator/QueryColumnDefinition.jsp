@@ -53,28 +53,28 @@
                 				</td>
                 				<td align="left" style="padding-left: 50px;">
                 					<nested:equal property="columnMandatoryFlag" value="Y">
-				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.forms[0].columnMandatoryFlag" + count + ".value='Y'; }else{document.forms[0].columnMandatoryFlag" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.getElementById('columnMandatoryFlag" + count + "').value='Y'; }else{document.getElementById('columnMandatoryFlag" + count + "').value='N';}"%>"/>
 				              		</nested:equal>
 				              		<nested:notEqual property="columnMandatoryFlag" value="Y">
-				              			<input type="checkbox" onclick="<%= "if(this.checked){document.forms[0].columnMandatoryFlag" + count + ".value='Y'; }else{document.forms[0].columnMandatoryFlag" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" onclick="<%= "if(this.checked){document.getElementById('columnMandatoryFlag" + count + "').value='Y'; }else{document.getElementById('columnMandatoryFlag" + count + "').value='N';}"%>"/>
 				              		</nested:notEqual>
 				              		<nested:hidden property="columnMandatoryFlag" styleId="<%= \"columnMandatoryFlag\" + count%>"/>
                 				</td>
                 				<td align="left" style="padding-left: 50px;">
                 					<nested:equal property="columnUniqueFlag" value="Y">
-				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.forms[0].columnUniqueFlag" + count + ".value='Y'; }else{document.forms[0].columnUniqueFlag" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.getElementById('columnUniqueFlag" + count + "').value='Y'; }else{document.getElementById('columnUniqueFlag" + count + "').value='N';}"%>"/>
 				              		</nested:equal>
 				              		<nested:notEqual property="columnUniqueFlag" value="Y">
-				              			<input type="checkbox" onclick="<%= "if(this.checked){document.forms[0].columnUniqueFlag" + count + ".value='Y'; }else{document.forms[0].columnUniqueFlag" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" onclick="<%= "if(this.checked){document.getElementById('columnUniqueFlag" + count + "').value='Y'; }else{document.getElementById('columnUniqueFlag" + count + "').value='N';}"%>"/>
 				              		</nested:notEqual>
 				              		<nested:hidden property="columnUniqueFlag" styleId="<%= \"columnUniqueFlag\" + count %>"/>
                 				</td>
                 				<td align="left" style="padding-left: 50px;">
                 					<nested:equal property="conversionColumn" value="Y">
-				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.forms[0].conversionColumn" + count + ".value='Y'; }else{document.forms[0].conversionColumn" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.getElementById('conversionColumn" + count + "').value='Y'; }else{document.getElementById('conversionColumn" + count + "').value='N';}"%>"/>
 				              		</nested:equal>
 				              		<nested:notEqual property="conversionColumn" value="Y">
-				              			<input type="checkbox" onclick="<%= "if(this.checked){document.forms[0].conversionColumn" + count + ".value='Y'; }else{document.forms[0].conversionColumn" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" onclick="<%= "if(this.checked){document.getElementById('conversionColumn" + count + "').value='Y'; }else{document.getElementById('conversionColumn" + count + "').value='N';}"%>"/>
 				              		</nested:notEqual>
 				              		<nested:hidden property="conversionColumn" styleId="<%= \"conversionColumn\" + count %>"/>
                 				</td>

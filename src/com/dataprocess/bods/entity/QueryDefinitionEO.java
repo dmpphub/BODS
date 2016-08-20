@@ -46,6 +46,9 @@ public class QueryDefinitionEO {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(FetchMode.JOIN)
 	private Set<QueryDefinitionLineEO> sourceConfiguratorLineEOSet;
+	
+	@Column(name = "SOURCE_CFG_OBJECT")
+	private byte[] object;
 
 	public int getSourceConfiguratorId() {
 		return sourceConfiguratorId;
@@ -103,4 +106,11 @@ public class QueryDefinitionEO {
 		this.sourceConfiguratorLineEOSet = sourceConfiguratorLineEOSet;
 	}
 
+	public byte[] getObject() {
+		return object;
+	}
+
+	public void setObject(byte[] object) {
+		this.object = object;
+	}
 }

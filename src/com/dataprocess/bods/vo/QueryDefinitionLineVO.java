@@ -1,9 +1,16 @@
 package com.dataprocess.bods.vo;
 
+import java.io.Serializable;
+
 import com.dataprocess.bods.util.EntityProperty;
 
-public class QueryDefinitionLineVO {
+public class QueryDefinitionLineVO implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4166010645206478963L;
+
 	@EntityProperty(columnName = "sourceConfiguratorLineId")
 	private int sourceConfiguratorLineId;
 	

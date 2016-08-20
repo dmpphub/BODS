@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import com.dataprocess.bods.dao.QueryDefinitionDAO;
 import com.dataprocess.bods.entity.QueryDefinitionEO;
+import com.dataprocess.bods.util.BytesUtil;
 import com.dataprocess.bods.util.SpringBeanUtils;
+import com.dataprocess.bods.vo.QueryDefinitionLineVO;
 import com.dataprocess.bods.vo.QueryDefinitionVO;
 
 /**
@@ -40,12 +42,15 @@ public class QueryDefinitionBusiness {
     public boolean saveQueryDefinition(QueryDefinitionVO queryDefinitionVO) {
         QueryDefinitionDAO queryDefinitionDAO = null;
         SpringBeanUtils beanUtils = null;
+        BytesUtil bytesUtil = null;
         QueryDefinitionEO queryDefinitionEO = null;
         boolean hasCompleted = false;
         try {
             beanUtils = new SpringBeanUtils();
             queryDefinitionDAO = new QueryDefinitionDAO();
             queryDefinitionEO = new QueryDefinitionEO();
+            bytesUtil = new BytesUtil();
+            queryDefinitionEO.setObject(bytesUtil.toByteArray(queryDefinitionVO));
             queryDefinitionEO =
                 (QueryDefinitionEO) beanUtils.populateToEntityObject(queryDefinitionVO, queryDefinitionEO);
             hasCompleted = queryDefinitionDAO.saveQueryDefinition(queryDefinitionEO);
@@ -101,13 +106,20 @@ public class QueryDefinitionBusiness {
     public QueryDefinitionVO fetchQueryDefinitionDetails(QueryDefinitionVO queryDefinitionVO) {
         QueryDefinitionEO queryDefinitionEO = null;
         QueryDefinitionDAO queryDefinitionDAO = null;
-
+        BytesUtil bytesUtil = null;
+        
         try {
             queryDefinitionDAO = new QueryDefinitionDAO();
+            bytesUtil = new BytesUtil();
             queryDefinitionEO = queryDefinitionDAO.fetchQueryDefinitionDetails(queryDefinitionVO);
-            queryDefinitionVO =
-                (QueryDefinitionVO) new SpringBeanUtils().populateToDTOObject(queryDefinitionEO, queryDefinitionVO);
+            queryDefinitionVO = (QueryDefinitionVO) bytesUtil.toObject(queryDefinitionEO.getObject());
+            /*queryDefinitionVO =
+                (QueryDefinitionVO) new SpringBeanUtils().populateToDTOObject(queryDefinitionEO, queryDefinitionVO);*/
 
+            if (queryDefinitionVO.getSourceConfiguratorLineVOSet() != null && queryDefinitionVO.getSourceConfiguratorLineVOSet().size() > 0) {
+            	queryDefinitionVO.setQueryDefinitionLineVOList(new ArrayList<QueryDefinitionLineVO>(queryDefinitionVO.getSourceConfiguratorLineVOSet()));
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

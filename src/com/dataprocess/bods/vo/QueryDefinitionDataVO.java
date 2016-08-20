@@ -1,9 +1,15 @@
 package com.dataprocess.bods.vo;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class QueryDefinitionDataVO {
+public class QueryDefinitionDataVO implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5093679475070831768L;
+
 	private String dataValue;
 
 	private List<QueryDefinitionDataVO> queryDefinitionDataVOList;
