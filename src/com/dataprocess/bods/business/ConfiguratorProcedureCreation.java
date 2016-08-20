@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.dataprocess.bods.util.BODSException;
 import com.dataprocess.bods.vo.ConfiguratorColumnDefinitionVO;
+import com.dataprocess.bods.vo.ConfiguratorInterfaceColumnVO;
 import com.dataprocess.bods.vo.ConfiguratorVO;
 import com.dataprocess.bods.vo.ConfiguratorValidationVO;
 
@@ -132,11 +133,13 @@ public final class ConfiguratorProcedureCreation {
     private void variableDeclareBlock(StringBuffer procedureContent, ConfiguratorVO configuratorVO)
         throws BODSException {
         String stagingTable = "";
+        List<ConfiguratorInterfaceColumnVO> configuratorInterfaceColumnVOList = null;
         List<ConfiguratorColumnDefinitionVO> configuratorColumnDefinitionVOList = null;
         try {
             stagingTable =
                 "STG_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorVO.getConfiguratorId();
             configuratorColumnDefinitionVOList = configuratorVO.getConfiguratorColumnDefinitionVOList();
+            configuratorInterfaceColumnVOList = configuratorVO.getConfiguratorInterfaceColumnVOList();
             procedureContent.append(" DECLARE \n");
             for (ConfiguratorColumnDefinitionVO configuratorColumnDefinitionVO : configuratorColumnDefinitionVOList) {
                 if ("String".equalsIgnoreCase(configuratorColumnDefinitionVO.getDataType())) {
@@ -147,7 +150,8 @@ public final class ConfiguratorProcedureCreation {
                         + configuratorColumnDefinitionVO.getDataType() + "; \n");
                 }
             }
-            buildProcedureBlock(stagingTable, procedureContent, configuratorColumnDefinitionVOList);
+            buildProcedureBlock(stagingTable, procedureContent, configuratorColumnDefinitionVOList,
+                configuratorInterfaceColumnVOList);
         } catch (BODSException bodsException) {
             throw bodsException;
         } catch (Exception exception) {
@@ -164,9 +168,11 @@ public final class ConfiguratorProcedureCreation {
      * @throws BODSException the bODS exception
      */
     private void buildProcedureBlock(String stagingTable, StringBuffer procedureContent,
-        List<ConfiguratorColumnDefinitionVO> configuratorColumnDefinitionVOList) throws BODSException {
+        List<ConfiguratorColumnDefinitionVO> configuratorColumnDefinitionVOList,
+        List<ConfiguratorInterfaceColumnVO> configuratorInterfaceColumnVOList) throws BODSException {
         int index = 0;
         int curIndex = 0;
+        String interfaceTableName = "";
         String columnName = "";
         String columnValue = "";
         try {
@@ -184,21 +190,24 @@ public final class ConfiguratorProcedureCreation {
             procedureContent.append(" BEGIN \n");
             procedureContent.append(" FOR CUR_BODS IN BODS \n");
             procedureContent.append(" LOOP \n");
-            for (ConfiguratorColumnDefinitionVO configuratorColumnDefinitionVO : configuratorColumnDefinitionVOList) {
-                if (curIndex == 0) {
-                    columnName += configuratorColumnDefinitionVO.getColumnName();
-                    columnValue += configuratorColumnDefinitionVO.getColumnName() + "_L";
-                } else {
-                    columnName += ", " + configuratorColumnDefinitionVO.getColumnName();
-                    columnValue += ", " + configuratorColumnDefinitionVO.getColumnName() + "_L";
+            for (ConfiguratorInterfaceColumnVO configuratorInterfaceColumnVO : configuratorInterfaceColumnVOList) {
+                if ("Y".equalsIgnoreCase(configuratorInterfaceColumnVO.getMappedColumnFlag())) {
+                    if (curIndex == 0) {
+                        interfaceTableName = configuratorInterfaceColumnVO.getTableName();
+                        columnName += configuratorInterfaceColumnVO.getColumnName();
+                        columnValue += configuratorInterfaceColumnVO.getAttributeName() + "_L";
+                    } else {
+                        columnName += ", " + configuratorInterfaceColumnVO.getColumnName();
+                        columnValue += ", " + configuratorInterfaceColumnVO.getAttributeName() + "_L";
+                    }
+                    procedureContent.append(configuratorInterfaceColumnVO.getAttributeName() + "_L := CUR_BODS."
+                        + configuratorInterfaceColumnVO.getAttributeName() + "; \n");
+                    curIndex++;
                 }
-                procedureContent.append(configuratorColumnDefinitionVO.getColumnName() + "_L := CUR_BODS."
-                    + configuratorColumnDefinitionVO.getColumnName() + "; \n");
-                curIndex++;
             }
             procedureContent.append(" BEGIN \n");
             procedureContent.append(" INSERT INTO \n");
-            procedureContent.append(" BODS_EMP_DEPT (" + columnName + ") \n");
+            procedureContent.append(interfaceTableName + " (" + columnName + ") \n");
             procedureContent.append(" VALUES (" + columnValue + "); \n");
             procedureContent.append(" COMMIT ; \n");
             procedureContent.append(" END ; \n");

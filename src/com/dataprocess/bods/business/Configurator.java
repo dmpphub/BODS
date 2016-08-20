@@ -282,14 +282,18 @@ public final class Configurator {
         ConfiguratorDAO configuratorDAO = null;
         ConfiguratorEO configuratorEO = null;
         ConfiguratorBinariesEO configuratorBinariesEO = null;
+        ConfiguratorProcedureCreation configuratorProcedureCreation = null;
         BytesUtil bytesUtil = null;
         SpringBeanUtils beanUtils = null;
         try {
             bytesUtil = new BytesUtil();
             beanUtils = new SpringBeanUtils();
+            configuratorProcedureCreation = new ConfiguratorProcedureCreation();
             configuratorDAO = new ConfiguratorDAO();
             configuratorEO = new ConfiguratorEO();
             configuratorBinariesEO = new ConfiguratorBinariesEO();
+            configuratorProcedureCreation.createStagingProcedure(configuratorVO);
+            configuratorProcedureCreation.createValidationProcedure(configuratorVO);
             configuratorBinariesEO.setObject(bytesUtil.toByteArray(configuratorVO));
             configuratorEO = (ConfiguratorEO) beanUtils.populateToEntityObject(configuratorVO, configuratorEO);
             configuratorEO.setConfiguratorBinariesEO(configuratorBinariesEO);
