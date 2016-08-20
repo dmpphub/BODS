@@ -1,7 +1,5 @@
 package com.dataprocess.bods.vo;
 
-import java.util.List;
-
 import com.dataprocess.bods.util.EntityProperty;
 
 public class QueryDefinitionLineVO {
@@ -27,8 +25,8 @@ public class QueryDefinitionLineVO {
 	@EntityProperty(columnName = "conversionColumn")
 	private String conversionColumn;
 	
-	private List<QueryDefinitionDataVO> queryDefinitionDataVOList;
-	
+	private String dataValue;
+
 	public int getSourceConfiguratorLineId() {
 		return sourceConfiguratorLineId;
 	}
@@ -85,12 +83,12 @@ public class QueryDefinitionLineVO {
 		this.conversionColumn = conversionColumn;
 	}
 
-	public List<QueryDefinitionDataVO> getQueryDefinitionDataVOList() {
-		return queryDefinitionDataVOList;
+	public String getDataValue() {
+		return dataValue;
 	}
 
-	public void setQueryDefinitionDataVOList(List<QueryDefinitionDataVO> queryDefinitionDataVOList) {
-		this.queryDefinitionDataVOList = queryDefinitionDataVOList;
+	public void setDataValue(String dataValue) {
+		this.dataValue = dataValue;
 	}
 
 }

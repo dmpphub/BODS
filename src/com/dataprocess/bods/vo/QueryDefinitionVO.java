@@ -45,6 +45,8 @@ public class QueryDefinitionVO implements Serializable {
 	
 	private List<QueryDefinitionLineVO> queryDefinitionLineVOList;
 	
+	private List<QueryDefinitionDataVO> queryDefinitionDataVOList;
+	
 	@EntityProperty(columnName="sourceConfiguratorLineEOSet", entity="com.dataprocess.bods.entity.QueryDefinitionLineEO")
 	private Set<QueryDefinitionLineVO> sourceConfiguratorLineVOSet;
 	
@@ -160,5 +162,14 @@ public class QueryDefinitionVO implements Serializable {
 
 	public void setQueryDefinitionVOList(List<QueryDefinitionVO> queryDefinitionVOList) {
 		this.queryDefinitionVOList = queryDefinitionVOList;
+	}
+
+	public List<QueryDefinitionDataVO> getQueryDefinitionDataVOList() {
+		return queryDefinitionDataVOList;
+	}
+
+	public void setQueryDefinitionDataVOList(
+			List<QueryDefinitionDataVO> queryDefinitionDataVOList) {
+		this.queryDefinitionDataVOList = queryDefinitionDataVOList;
 	}
 }

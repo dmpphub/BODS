@@ -35,16 +35,18 @@
             </tr>
         </tfoot> -->
         <tbody>
-        	<nested:present property="queryDefinitionLineVOList">
-            	<nested:iterate property="queryDefinitionLineVOList" id="queryDefinitionLineVOList" 
-               		type="com.dataprocess.bods.vo.QueryDefinitionLineVO" indexId="count">
+        	<nested:present property="queryDefinitionDataVOList">
+            	<nested:iterate property="queryDefinitionDataVOList" id="queryDefinitionLineVOList" 
+               		type="com.dataprocess.bods.vo.QueryDefinitionDataVO" indexId="count">
 					<tr>
-						<nested:iterate property="queryDefinitionDataVOList" id="queryDefinitionDataVOList" 
-               				type="com.dataprocess.bods.vo.QueryDefinitionDataVO" indexId="count1">
-               					<td>
-               						<nested:write property="dataValue"/>
-               					</td>
-               			</nested:iterate>		
+						<nested:present property="queryDefinitionDataVOList">
+							<nested:iterate property="queryDefinitionDataVOList" id="queryDefinitionDataVOList" 
+	               				type="com.dataprocess.bods.vo.QueryDefinitionDataVO" indexId="count1">
+	               					<td>
+	               						<nested:write property="dataValue"/>
+	               					</td>
+	               			</nested:iterate>							
+						</nested:present>
 					</tr>               				
                	</nested:iterate>
             </nested:present>
@@ -59,23 +61,5 @@ $(document).ready(function() {
     $('#example').DataTable( {
         "pagingType": "full_numbers"
     } );
-    $("tbody").each(function() {
-    	var $this = $(this);
-    	var newrows = [];
-    	$this.find("tr").each(function(){
-    		var i = 0;
-    		$(this).find("td").each(function(){
-    			i++;
-    			if(newrows[i] == undefined) {
-    				newrows[i] = $("<tr></tr>");
-    			}
-    			newrows[i].append($(this));
-    		});
-    	});
-    	$this.find("tr").remove();
-    	$.each(newrows, function(){
-    		$this.append(this);
-    	});
-    });
 } );
 </script>

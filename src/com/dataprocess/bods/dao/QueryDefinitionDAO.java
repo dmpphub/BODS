@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -27,11 +30,14 @@ public final class QueryDefinitionDAO {
 		QueryDefinitionLineVO queryDefinitionLineVO = null;
 		QueryDefinitionDataVO queryDefinitionDataVO = null;
 		HashSet<QueryDefinitionLineVO> queryDefinitionLineVOSet = null;
+		Map<Integer, String> columnCountMap = new LinkedHashMap<Integer, String>();
+		List<QueryDefinitionDataVO> dataVOList = null;
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		ResultSetMetaData metaData = null;
 		boolean hasValidated = false;
+		int count = 0;
 
 		try {
 			jdbcConnectionManager = new JDBCConnectionManager();
@@ -60,7 +66,39 @@ public final class QueryDefinitionDAO {
 						}
 
 						queryDefinitionVO.getQueryDefinitionLineVOList().add(queryDefinitionLineVO);
-						queryDefinitionVO.getQueryDefinitionLineVOList().get(i - 1)
+						columnCountMap.put(i, queryDefinitionLineVO.getDataType());
+					}
+					
+					if (queryDefinitionVO.getQueryDefinitionLineVOList() != null && 
+							queryDefinitionVO.getQueryDefinitionLineVOList().size() > 0) {
+						rs.beforeFirst();
+						
+						
+						while (rs.next()) {
+							if (queryDefinitionVO.getQueryDefinitionDataVOList() == null) {
+								queryDefinitionVO.setQueryDefinitionDataVOList(new ArrayList<QueryDefinitionDataVO>());
+							}
+							
+							dataVOList = new ArrayList<QueryDefinitionDataVO>();
+							for (Map.Entry<Integer, String> entry : columnCountMap.entrySet()) {
+								
+								queryDefinitionDataVO = new QueryDefinitionDataVO();
+								//System.out.println("Key : " + entry.getKey() + " Value : " + entry.getValue());
+								if (entry.getValue().equals("STRING")) {
+									queryDefinitionDataVO.setDataValue(rs.getString(entry.getKey()));
+								} else {
+									queryDefinitionDataVO.setDataValue(String.valueOf(rs.getInt(entry.getKey())));
+								}
+								dataVOList.add(queryDefinitionDataVO);
+							}
+							queryDefinitionVO.getQueryDefinitionDataVOList().add(queryDefinitionDataVO);
+							queryDefinitionVO.getQueryDefinitionDataVOList().get(count).setQueryDefinitionDataVOList(new ArrayList<QueryDefinitionDataVO>());
+							queryDefinitionVO.getQueryDefinitionDataVOList().get(count).setQueryDefinitionDataVOList(dataVOList);
+							count++;
+						}
+						
+					}
+						/*queryDefinitionVO.getQueryDefinitionLineVOList().get(i - 1)
 								.setQueryDefinitionDataVOList(new ArrayList<QueryDefinitionDataVO>());
 
 						while (rs.next()) {
@@ -78,7 +116,7 @@ public final class QueryDefinitionDAO {
 							queryDefinitionVO.getQueryDefinitionLineVOList().get(i - 1).getQueryDefinitionDataVOList()
 									.add(queryDefinitionDataVO);
 						}
-						rs.beforeFirst();
+						rs.beforeFirst();*/
 					}
 				}
 				if (queryDefinitionVO.getQueryDefinitionLineVOList() != null
@@ -88,7 +126,6 @@ public final class QueryDefinitionDAO {
 					queryDefinitionVO.setSourceConfiguratorLineVOSet(queryDefinitionLineVOSet);
 				}
 				hasValidated = true;
-			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
