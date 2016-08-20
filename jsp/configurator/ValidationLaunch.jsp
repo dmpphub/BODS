@@ -36,16 +36,7 @@
 				$('#conversionBlock').hide();
 			}
 		})
-		//onload();
 	});
-	
-	/* function onload() {
-		alert($('#successId').val())
-		if($('#successId').val() == 'Success') {
-			dynamicConversionLeftColumn();
-			dynamicConversionRightColumn();
-		}
-	} */
 	
 	function getLeftExprValue() {
 		var selectVal = $('#leftExpressionType').val();
