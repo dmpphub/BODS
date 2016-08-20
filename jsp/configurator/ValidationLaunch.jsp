@@ -6,6 +6,7 @@
 	var queryColumnNameArr;
 	var configuratorColumnVOArr;
 	var conditionArr = '';
+	var conversionArr = '';
 	
 	function callSubmit() {
 		document.configuratorForm.action='/bods/ValidationSaveMapping.etl';
@@ -25,6 +26,8 @@
 		$('#successId').change(function() {
 			if(this.checked) {
 				$('#conversionBlock').show();
+				dynamicConversionLeftColumn();
+				dynamicConversionRightColumn();
 			}
 		})
 	
@@ -33,7 +36,26 @@
 				$('#conversionBlock').hide();
 			}
 		})
+		//onload();
 	});
+	
+	/* function onload() {
+		alert($('#successId').val())
+		if($('#successId').val() == 'Success') {
+			dynamicConversionLeftColumn();
+			dynamicConversionRightColumn();
+		}
+	} */
+	
+	function getLeftExprValue() {
+		var selectVal = $('#leftExpressionType').val();
+		if(selectVal == 'Query') {
+			dynamicQueryColumnFormation();
+		} else {
+			var currentDivObject = $('#dynamicLeftExpressionValueId');
+			$(currentDivObject).empty();
+		}
+	}
 	
 	function getRightExprValue() {
 		var selectVal = $('#rightExpressionType').val();
@@ -48,6 +70,8 @@
 	}
 	
 	function invokeQueryParse() {
+		queryColumnNameArr = '';
+		configuratorColumnVOArr = '';
 		var queryValue = $('#validateQry').val();
 		$.ajax({
 			 async : false,
@@ -59,8 +83,8 @@
 		    		 var conditionVO = $.parseJSON(data);
 			    	 queryColumnNameArr = conditionVO.configuratorVO.queryColumnNameList;
 			    	 configuratorColumnVOArr = conditionVO.configuratorVO.configuratorColumnVOList;
-			    	 dynamicQueryColumnFormation();
-			    	 dynamicConfiguratorColumnFormation();
+			    	 //dynamicQueryColumnFormation();
+			    	 //dynamicConfiguratorColumnFormation();
 		    	 }
 		     }, error: function(xhr, status, error) {
 		            console.log(xhr);
@@ -75,9 +99,15 @@
 		$(currentDivObject).empty();
 		var leftExpressionObject = '<select id=\"leftExpressionValue\" name=\"leftExpressionValue\" style=\"width: 150px;margin-left: -91px;\">';
 		var opts = [];
-		if(queryColumnNameArr != '') {
-			for(var columnName in queryColumnNameArr) {
-				leftExpressionObject += '<option value="' + queryColumnNameArr[columnName] + ' ">' + queryColumnNameArr[columnName] + '</option>';
+		if(queryColumnNameArr.indexOf('-1') != -1) {
+			opts = queryColumnNameArr.split(",");
+		} else {
+			opts = queryColumnNameArr;
+		}
+		if(opts != '') {
+			leftExpressionObject +='<option value="--Select--">--Select--</option>';
+			for(var i=0; i < opts[0].length;i++) {
+				leftExpressionObject += '<option value="' + opts[0][i] + ' ">' + opts[0][i] + '</option>';
 			}
 			leftExpressionObject += '</select>'
 			currentDivObject.append(leftExpressionObject);
@@ -90,6 +120,7 @@
 		var rightExpressionObject = '<select id=\"rightExpressionValue\" name=\"rightExpressionValue\" style=\"width: 150px;margin-left: -71px;\">';
 		var opts = [];
 		if(configuratorColumnVOArr != '') {
+			rightExpressionObject +='<option value="--Select--">--Select--</option>';
 			for(var i=0; i < configuratorColumnVOArr[0].length;i++) {
 				rightExpressionObject += '<option value="' + configuratorColumnVOArr[0][i].columnName + ' ">' + configuratorColumnVOArr[0][i].columnName + '</option>';
 			}
@@ -101,6 +132,36 @@
 	function dynamicConversionLeftColumn() {
 		var currentDivObject = $('#dynamicConversionLeftColId');
 		$(currentDivObject).empty();
+		var leftExpressionObject = '<select id=\"leftExpressionConversionValue\" name=\"leftExpressionConversionValue\" style=\"width: 150px;margin-left: -91px;\">';
+		var opts = [];
+		if(queryColumnNameArr.indexOf('-1') != -1) {
+			opts = queryColumnNameArr.split(",");
+		} else {
+			opts = queryColumnNameArr;
+		}
+		if(opts != '') {
+			leftExpressionObject +='<option value="--Select--">--Select--</option>';
+			for(var i=0; i < opts[0].length;i++) {
+				leftExpressionObject += '<option value="' + opts[0][i] + ' ">' + opts[0][i] + '</option>';
+			}
+			leftExpressionObject += '</select>'
+			currentDivObject.append(leftExpressionObject);
+		} 
+	}
+	
+	function dynamicConversionRightColumn() {
+		var currentDivObject = $('#dynamicConversionRightColId');
+		$(currentDivObject).empty();
+		var rightExpressionObject = '<select id=\"rightExpressionConversionValue\" name=\"rightExpressionConversionValue\" style=\"width: 150px;margin-left: -71px;\">';
+		var opts = [];
+		if(configuratorColumnVOArr != '') {
+			rightExpressionObject += '<option value="--Select--">--Select--</option>';
+			for(var i=0; i < configuratorColumnVOArr[0].length;i++) {
+				rightExpressionObject += '<option value="' + configuratorColumnVOArr[0][i].columnName + ' ">' + configuratorColumnVOArr[0][i].columnName + '</option>';
+			}
+			rightExpressionObject += '</select>'
+			currentDivObject.append(rightExpressionObject);
+		} 
 	}
 	
 	function addCondition() {
@@ -113,15 +174,28 @@
 	}
 	
 	function conversionCondition() {
-		
+		if(conversionArr == '') {
+			conversionArr = conversionStr();
+		} else {
+			conversionArr += ', ' +conversionStr();
+		}
+		$('#conversionStrId').val(conversionArr);
+	}
+	
+	function conversionStr() {
+		var cont = '';
+		if($('#leftExpressionConversionValue').val() != '' && $('#rightExpressionConversionValue').val() != '') {
+			cont =  "PVQUERY." + $('#rightExpressionConversionValue').val() + ' = ' + $('#leftExpressionConversionValue').val();
+		}
+		return cont;
 	}
 	
 	function conditionStr() {
 		var cont = '';
-		if($('#leftExpressionType').val() == 'Query' && $('#rightExpressionValue').val() != '' ) {
-			cont =  "STGTBL." + $('#leftExpressionValue').val() +   $('#operator option:selected').val()  +  "PVQUERY." + $('#rightExpressionValue').val();
+		if($('#leftExpressionType').val() == 'Query' && $('#rightExpressionType').val() != '' && $('#rightExpressionValue').val() !='' && $('#leftExpressionValue').val() != '') {
+			cont =  "STGTBL." + $('#rightExpressionValue').val() +   $('#operator option:selected').val()  +  "PVQUERY." + $('#leftExpressionValue').val();
 		} else {
-			cont =  "STGTBL." + $('#leftExpressionValue').val() +  $('#operator option:selected').val();
+			cont = "PVQUERY." + $('#leftExpressionValue').val() +  $('#operator option:selected').val();
 		}
 		return cont;
 	}
@@ -187,7 +261,7 @@
 										<span style="padding-left: 12px;"> Left Expression </span>
 									</div>
 									<div class="div-table-col">
-										<nested:select styleId="leftExpressionType" property="leftExpressionType" style="width: 150px;margin-left: -91px;">
+										<nested:select styleId="leftExpressionType" property="leftExpressionType" style="width: 150px;margin-left: -91px;" onchange="getLeftExprValue()">
 											<html:option value="">--Select--</html:option>
 											<html:option value="Query">Query Column</html:option>
 										</nested:select>
@@ -253,36 +327,38 @@
 									</div>
 								</div>
 								
-								<div class="div-table-row" id="dynamicConversionLeftId">
-									<h4><b><u> Conversion </u></b></h4>
-									<div class="div-table-col">
-										<span style="padding-left: 12px;"> Left Column </span>
+								<div id="conversionBlock">
+									<div class="div-table-row" id="dynamicConversionLeftId">
+										<h4><b><u> Conversion </u></b></h4>
+										<div class="div-table-col">
+											<span style="padding-left: 12px;"> Left Column </span>
+										</div>
+										<div class="div-table-col" id="dynamicConversionLeftColId">
+											<%-- <nested:text property="leftExpressionValue" style="width: 150px;margin-left: -91px;"/> --%>
+										</div>
+										<div class="div-table-col">
+											<span style="padding-left: 12px;"></span>
+										</div>
+										<div class="div-table-col">
+											<nested:hidden property="operator" styleClass="width: 150px;margin-left: -143px;"/>	
+										</div>
+										<div class="div-table-col">
+											<span style="padding-left: 20px;"> Right Column </span>
+										</div>
+										<div class="div-table-col" id="dynamicConversionRightColId">
+											<%-- <nested:text property="rightExpressionValue" style="width: 150px;margin-left: -71px;"/>	 --%>
+										</div>
 									</div>
-									<div class="div-table-col" id="dynamicConversionLeftColId">
-										<%-- <nested:text property="leftExpressionValue" style="width: 150px;margin-left: -91px;"/> --%>
-									</div>
-									<div class="div-table-col">
-										<span style="padding-left: 12px;"></span>
-									</div>
-									<div class="div-table-col">
-										<nested:hidden property="operator" styleClass="width: 150px;margin-left: -143px;"/>	
-									</div>
-									<div class="div-table-col">
-										<span style="padding-left: 20px;"> Right Column </span>
-									</div>
-									<div class="div-table-col" id="dynamicConversionRightColId">
-										<%-- <nested:text property="rightExpressionValue" style="width: 150px;margin-left: -71px;"/>	 --%>
-									</div>
-								</div>
-								<div class="div-table-row" id="dynamicConversionCondtId">
-									<div class="div-table-col">
-										<span></span>
-									</div>
-									<div class="div-table-col">
-										<nested:textarea property="validationConversion" rows="4" cols="50" style="resize:none;" styleId="condtStrId"/>
-									</div>
-									<div class="div-table-col" style="margin-left: 38px;margin-top: 40px;">
-										<button class="btn waves-effect waves-light" type="button" onclick="conversionCondition()">Conversion Condition</button>
+									<div class="div-table-row" id="dynamicConversionCondtId">
+										<div class="div-table-col">
+											<span></span>
+										</div>
+										<div class="div-table-col">
+											<nested:textarea property="validationConversion" rows="4" cols="50" style="resize:none;" styleId="conversionStrId"/>
+										</div>
+										<div class="div-table-col" style="margin-left: 38px;margin-top: 40px;">
+											<button class="btn waves-effect waves-light" type="button" onclick="conversionCondition()">Conversion Condition</button>
+										</div>
 									</div>
 								</div>
 								
