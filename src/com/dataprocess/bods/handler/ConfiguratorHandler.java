@@ -191,4 +191,30 @@ public final class ConfiguratorHandler {
         }
 
     }
+
+	public ConfiguratorVO fetchConfiguratorList(ConfiguratorVO configuratorVO) throws BODSException {
+		Configurator configurator = null;
+		try {
+			configurator = new Configurator();
+			configurator.fetchConfiguratorList(configuratorVO);
+		} catch (BODSException bodsException) {
+			throw bodsException;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BODSException("ConfiguratorVO", "fetchQueryDefinitionList", e.getMessage());
+		} 
+		return configuratorVO;
+	}
+
+	public ConfiguratorVO fetchConfigurationDetails(ConfiguratorVO configuratorVO) {
+		Configurator configurator = null;
+		try {
+			configurator = new Configurator();
+			configuratorVO = configurator.fetchConfigurationDetails(configuratorVO);
+			
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+		return configuratorVO;
+	}
 }

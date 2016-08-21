@@ -363,4 +363,36 @@ public final class Configurator {
             throw new BODSException("Configurator", "getSourceConfigurationNameList", exception.getMessage());
         }
     }
+    
+    public void fetchConfiguratorList(ConfiguratorVO configuratorVO) throws BODSException {
+		ConfiguratorDAO configuratorDAO = null;
+		try {
+			configuratorDAO = new ConfiguratorDAO();
+			configuratorDAO.fetchConfiguratorList(configuratorVO);
+		} catch (BODSException bodsException) {
+			throw bodsException;
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new BODSException("Configurator", "fetchQueryDefinitionList", exception.getMessage());
+		}
+	}
+
+	public ConfiguratorVO fetchConfigurationDetails(ConfiguratorVO configuratorVO) throws BODSException {
+		ConfiguratorDAO configuratorDAO = null;
+		ConfiguratorEO configuratorEO = null;
+		BytesUtil bytesUtil = null;
+		try {
+			configuratorDAO = new ConfiguratorDAO();
+			bytesUtil = new BytesUtil();
+			configuratorEO = configuratorDAO.fetchConfigurator(configuratorVO.getConfiguratorId());
+			configuratorVO =
+	                (ConfiguratorVO) bytesUtil.toObject(configuratorEO.getConfiguratorBinariesEOSet().iterator().next()
+	                    .getObject());
+			
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new BODSException("Configurator", "fetchConfigurationDetails", exception.getMessage());
+		}
+		return configuratorVO;
+	}
 }

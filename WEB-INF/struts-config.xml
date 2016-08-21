@@ -117,6 +117,16 @@
 		<forward name="forward.success" path="configuratorColumnDefinition.main"/>
 	</action>
 	
+	<action path="/ConfiguratorList" input="queryDefinition.main" name="configuratorForm" attribute="configuratorForm" validate="false" 
+		type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="ConfiguratorList.main" />
+	</action>
+	
+	<action path="/FetchConfiguratorDetails" input="queryDefinition.main" name="configuratorForm" attribute="configuratorForm" validate="false" 
+		type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="configuratorLaunch.main" />
+	</action>
+	
 	<!-- Validation Process -->
 	<action path="/ValidationLaunch" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
 		<forward name="forward.success" path="validationLaunch.main"/>
@@ -129,6 +139,10 @@
 	<action path="/QueryValidationMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
 	</action>
 	
+	<action path="/ValidationList" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success" path="validationList.main"/>
+		<forward name="forward.failure" path="validationLaunch.main"/>
+	</action>
 	
 	<!-- Interface Column Mapping -->
 	<action path="/TargetColumnMappingLaunch" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">

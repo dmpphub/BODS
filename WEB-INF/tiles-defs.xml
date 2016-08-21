@@ -288,5 +288,46 @@
 	
 	<definition name="prevalidationProcess.footer" extends="bodsbase.main.footer"/>
 	
+	<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+	 <definition name="ConfiguratorList.main" extends="bodsbase.main">
+    	<put name="page.head"         value="ConfiguratorList.html.head"/>
+        <put name="page.menu"    	  value="ConfiguratorList.menu"/>
+        <put name="page.body"         value="ConfiguratorList.body"/>
+        <put name="page.footer"       value="ConfiguratorList.footer"/>
+    </definition>
+    
+    <definition name="ConfiguratorList.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="ConfiguratorList.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="ConfiguratorList.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/configurator/ConfiguratorList.jsp"/>
+	</definition>
+	
+	<definition name="ConfiguratorList.footer" extends="bodsbase.main.footer"/>
+
+	<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+	 <definition name="validationList.main" extends="bodsbase.main">
+    	<put name="page.head"         value="validationList.html.head"/>
+        <put name="page.menu"    	  value="validationList.menu"/>
+        <put name="page.body"         value="validationList.body"/>
+        <put name="page.footer"       value="validationList.footer"/>
+    </definition>
+    
+    <definition name="validationList.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="validationList.menu" extends="bodsbase.main.menu">
+	</definition>
+
+	<definition name="validationList.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/configurator/ValidationList.jsp"/>
+	</definition>
+	
+	<definition name="validationList.footer" extends="bodsbase.main.footer"/>	
 	
 </tiles-definitions>

@@ -14,9 +14,12 @@ import org.apache.struts.action.ActionMapping;
 import org.json.JSONObject;
 
 import com.dataprocess.bods.handler.ConfiguratorHandler;
+import com.dataprocess.bods.handler.QueryDefinitionHandler;
 import com.dataprocess.bods.vo.ConfiguratorVO;
 import com.dataprocess.bods.vo.ConfiguratorValidationVO;
+import com.dataprocess.bods.vo.QueryDefinitionVO;
 import com.dataprocess.bods.web.form.ConfiguratorForm;
+import com.dataprocess.bods.web.form.QueryDefinitionForm;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -79,9 +82,19 @@ public final class ConfiguratorAction extends Action {
         } else if (mapping.getPath().equals("/ValidationLaunch")) {
             configuratorHandler = new ConfiguratorHandler();
             configuratorValidationVO = new ConfiguratorValidationVO();
-            configuratorValidationVO.setActive("Y");
-            configuratorValidationVO.setValidationInference("Error");
-            configuratorForm.getConfiguratorVO().setConfiguratorValidationVO(configuratorValidationVO);
+            
+            if (request.getParameter("name") != null) {
+            	for (int i = 0; i < configuratorForm.getConfiguratorVO().getConfiguratorValidationVOList().size(); i++) {
+            		configuratorValidationVO = configuratorForm.getConfiguratorVO().getConfiguratorValidationVOList().get(i);
+            		if (configuratorValidationVO.equals(request.getParameter("name"))) {
+            			configuratorForm.getConfiguratorVO().setConfiguratorValidationVO(configuratorValidationVO);
+            		}
+				}
+            } else {
+            	configuratorValidationVO.setActive("Y");
+                configuratorValidationVO.setValidationInference("Error");
+                configuratorForm.getConfiguratorVO().setConfiguratorValidationVO(configuratorValidationVO);
+            }
         } else if (mapping.getPath().equals("/QueryValidationMapping")) {
             String query = request.getParameter("query").toString();
             configuratorHandler = new ConfiguratorHandler();
@@ -117,6 +130,30 @@ public final class ConfiguratorAction extends Action {
             configuratorHandler.execute(configuratorId, configuratorConnId);
         } else if (mapping.getPath().equals("/PrevalidationProcessLaunch")) {
 
+        } else if (mapping.getPath().equals("/ConfiguratorList")) {
+        	configuratorHandler = new ConfiguratorHandler();
+        	configuratorVO = configuratorHandler.fetchConfiguratorList(configuratorForm.getConfiguratorVO());
+			configuratorForm.setConfiguratorVO(configuratorVO);
+			forwardName = "forward.success";
+        } else if (mapping.getPath().equals("/FetchConfiguratorDetails")) {
+        	configuratorHandler = new ConfiguratorHandler();
+			if (request.getParameter("configuratorId") != null ) {
+				configuratorForm.getConfiguratorVO().setConfiguratorId(Integer.parseInt(request.getParameter("configuratorId")));
+			}
+			configuratorVO = configuratorHandler.fetchConfigurationDetails(configuratorForm.getConfiguratorVO());
+			configuratorVO.setConfiguratorId(Integer.parseInt(request.getParameter("configuratorId")));
+			configuratorForm.setConfiguratorVO(configuratorVO);
+			forwardName = "forward.success";
+        } else if (mapping.getPath().equals("/ValidationList")) {
+        	configuratorHandler = new ConfiguratorHandler();
+        	List<ConfiguratorValidationVO> validationVOList = null;
+        	validationVOList = configuratorForm.getConfiguratorVO().getConfiguratorValidationVOList();
+        	if (validationVOList != null && validationVOList.size() > 0) {
+        		forwardName = "forward.success";
+        	} else {
+        		forwardName = "forward.failure";
+        	}
+			//configuratorForm.setConfiguratorVO(configuratorVO);
         }
         return mapping.findForward(forwardName);
     }

@@ -569,4 +569,45 @@ public final class ConfiguratorDAO {
             }
         }
     }
+    
+    public void fetchConfiguratorList(ConfiguratorVO configuratorVO) throws BODSException {
+		StringBuffer queryBuffer = null;
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		JDBCConnectionManager jdbcConnectionManager = null;
+		ConfiguratorVO listVO = null;
+		try {
+			jdbcConnectionManager = new JDBCConnectionManager();
+			queryBuffer = new StringBuffer();
+			configuratorVO.setConfiguratorVOList(new ArrayList<ConfiguratorVO>());
+
+			if (jdbcConnectionManager.getJDBCConnection()) {
+				queryBuffer.append(" SELECT ");
+				queryBuffer.append(" BODS_CON.CONNECTION_NAME, BODS_CON.CONNECTION_ID, BODS_CFG.CONFIGURATOR_NAME, BODS_CFG.CONFIGURATOR_ID ");
+				queryBuffer.append(" FROM ");
+				queryBuffer.append(" BODS_CONNECTION_CFG BODS_CON, BODS_CONFIGURATOR_CFG BODS_CFG ");
+				queryBuffer.append(" WHERE ");
+				queryBuffer.append(" BODS_CON.CONNECTION_ID = BODS_CFG.CONFIGURATOR_CONN_ID ");
+
+				connection = jdbcConnectionManager.getConnection();
+				ps = connection.prepareStatement(queryBuffer.toString());
+				rs = ps.executeQuery();
+
+				while (rs.next()) {
+					listVO = new ConfiguratorVO();
+					listVO.setConfiguratorConnectionName(rs.getString("CONNECTION_NAME"));
+					listVO.setConfiguratorConnectionId(rs.getInt("CONNECTION_ID"));
+					listVO.setConfiguratorName(rs.getString("CONFIGURATOR_NAME"));
+					listVO.setConfiguratorId(rs.getInt("CONFIGURATOR_ID"));
+					configuratorVO.getConfiguratorVOList().add(listVO);
+				}
+			}
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new BODSException("ConfiguratorDAO", "fetchQueryDefinitionList", exception.getMessage());
+		} finally {
+			jdbcConnectionManager.closeConnection(connection, ps, rs);
+		}
+	}
 }

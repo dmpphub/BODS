@@ -83,7 +83,7 @@
 					</div>
 					<br/>
 					<center>
-						<button class="btn waves-effect waves-light" onclick="callExecute()" name="action">Execute</button>
+						<button id="executeButtonId" class="btn waves-effect waves-light" onclick="callExecute()" name="action">Execute</button>
 						<button class="btn waves-effect waves-light" type="submit" name="action">Next</button>
 					</center>
 				</div>
@@ -96,5 +96,8 @@
 		/* alert('text :' + $('#sourceConfigConn option:selected').html()); */
 		$('#configuratorConnectionName').val($('#configConn option:selected').html());
 	})
+	/* if(document.getElementById('configuratorId').value > 0) {
+		$('#executeButtonId').addClass('disabled');		
+	} */
 </script>
 </html:html>

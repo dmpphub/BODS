@@ -4,7 +4,11 @@
 
 <script>
 	function callSubmit() {
-		document.configuratorForm.action='/bods/ValidationLaunch.etl';
+		if(document.getElementById('configuratorId').value > 0) {
+			document.configuratorForm.action='/bods/ValidationList.etl';			
+		} else {
+			document.configuratorForm.action='/bods/ValidationLaunch.etl';
+		}
 		document.configuratorForm.submit();
 	}
 </script>
@@ -57,7 +61,7 @@
 							<nested:hidden styleId="conversion" property="conversion"/>	
 						</div>
 						<div class="div-table-col">
-							<button class="btn waves-effect waves-light" type="submit"
+							<button id="executeButtonId" class="btn waves-effect waves-light" type="submit"
 							name="action">Fetch</button>
 						</div>
 					</div>
@@ -89,37 +93,37 @@
                 				</td>
                 				<td>
                 					<nested:equal property="mandatory" value="Y">
-				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.forms[0].mandatory" + count + ".value='Y'; }else{document.forms[0].mandatory" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.getElementById('mandatory" + count + "').value='Y'; }else{document.getElementById('mandatory" + count + "').value='N';}"%>"/>
 				              		</nested:equal>
 				              		<nested:notEqual property="mandatory" value="Y">
-				              			<input type="checkbox" onclick="<%= "if(this.checked){document.forms[0].mandatory" + count + ".value='Y'; }else{document.forms[0].mandatory" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" onclick="<%= "if(this.checked){document.getElementById('mandatory" + count + "').value='Y'; }else{document.getElementById('mandatory" + count + "').value='N';}"%>"/>
 				              		</nested:notEqual>
 				              		<nested:hidden property="mandatory" styleId="<%= \"mandatory\" + count%>"/>
                 				</td>
                 				<td>
                 					<nested:equal property="unique" value="Y">
-				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.forms[0].unique" + count + ".value='Y'; }else{document.forms[0].unique" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.getElementById('unique" + count + "').value='Y'; }else{document.getElementById('unique" + count + "').value='N';}"%>"/>
 				              		</nested:equal>
 				              		<nested:notEqual property="unique" value="Y">
-				              			<input type="checkbox" onclick="<%= "if(this.checked){document.forms[0].unique" + count + ".value='Y'; }else{document.forms[0].unique" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" onclick="<%= "if(this.checked){document.getElementById('unique" + count + "').value='Y'; }else{document.getElementById('unique" + count + "').value='N';}"%>"/>
 				              		</nested:notEqual>
 				              		<nested:hidden property="unique" styleId="<%= \"unique\" + count %>"/>
                 				</td>
                 				<td>
                 					<nested:equal property="conversionColumn" value="Y">
-				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.forms[0].conversionColumn" + count + ".value='Y'; }else{document.forms[0].conversionColumn" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.getElementById('conversionColumn" + count + "').value='Y'; }else{document.getElementById('conversionColumn" + count + "').value='N';}"%>"/>
 				              		</nested:equal>
 				              		<nested:notEqual property="conversionColumn" value="Y">
-				              			<input type="checkbox" onclick="<%= "if(this.checked){document.forms[0].conversionColumn" + count + ".value='Y'; }else{document.forms[0].conversionColumn" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" onclick="<%= "if(this.checked){document.getElementById('conversionColumn" + count + "').value='Y'; }else{document.getElementById('conversionColumn" + count + "').value='N';}"%>"/>
 				              		</nested:notEqual>
 				              		<nested:hidden property="conversionColumn" styleId="<%= \"conversionColumn\" + count %>"/>
                 				</td>
                 				<td>
                 					<nested:equal property="activeColumnFlag" value="Y">
-				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.forms[0].activeColumnFlag" + count + ".value='Y'; }else{document.forms[0].activeColumnFlag" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" checked onclick="<%= "if(this.checked){document.getElementById('activeColumnFlag" + count + "').value='Y'; }else{document.getElementById('activeColumnFlag" + count + "').value='N';}"%>"/>
 				              		</nested:equal>
 				              		<nested:notEqual property="activeColumnFlag" value="Y">
-				              			<input type="checkbox" onclick="<%= "if(this.checked){document.forms[0].activeColumnFlag" + count + ".value='Y'; }else{document.forms[0].activeColumnFlag" + count + ".value='N';}"%>"/>
+				              			<input type="checkbox" onclick="<%= "if(this.checked){document.getElementById('activeColumnFlag" + count + "').value='Y'; }else{document.getElementById('activeColumnFlag" + count + "').value='N';}"%>"/>
 				              		</nested:notEqual>
 				              		<nested:hidden property="activeColumnFlag" styleId="<%= \"activeColumnFlag\" + count %>"/>
                 				</td>
@@ -147,4 +151,7 @@
 		/* alert('text :' + $('#sourceConfigConn option:selected').html()); */
 		$('#sourceConfigurationName').val($('#sourceConfigName option:selected').html());
 	})
+	if(document.getElementById('configuratorId').value > 0) {
+		$('#executeButtonId').addClass('disabled');		
+	}
 </script>

@@ -111,6 +111,8 @@ public class ConfiguratorVO implements Serializable {
 
     /** The configurator validation vo list. */
     private List<ConfiguratorValidationVO> configuratorValidationVOList;
+    
+    private List<ConfiguratorVO> configuratorVOList;
 
     /**
      * Instantiates a new configurator vo.
@@ -566,4 +568,12 @@ public class ConfiguratorVO implements Serializable {
     public void setConfiguratorInterfaceColumnVO(ConfiguratorInterfaceColumnVO configuratorInterfaceColumnVO) {
         this.configuratorInterfaceColumnVO = configuratorInterfaceColumnVO;
     }
+
+	public List<ConfiguratorVO> getConfiguratorVOList() {
+		return configuratorVOList;
+	}
+
+	public void setConfiguratorVOList(List<ConfiguratorVO> configuratorVOList) {
+		this.configuratorVOList = configuratorVOList;
+	}
 }
