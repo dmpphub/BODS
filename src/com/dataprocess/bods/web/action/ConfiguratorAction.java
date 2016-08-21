@@ -14,12 +14,9 @@ import org.apache.struts.action.ActionMapping;
 import org.json.JSONObject;
 
 import com.dataprocess.bods.handler.ConfiguratorHandler;
-import com.dataprocess.bods.handler.QueryDefinitionHandler;
 import com.dataprocess.bods.vo.ConfiguratorVO;
 import com.dataprocess.bods.vo.ConfiguratorValidationVO;
-import com.dataprocess.bods.vo.QueryDefinitionVO;
 import com.dataprocess.bods.web.form.ConfiguratorForm;
-import com.dataprocess.bods.web.form.QueryDefinitionForm;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -154,6 +151,8 @@ public final class ConfiguratorAction extends Action {
         		forwardName = "forward.failure";
         	}
 			//configuratorForm.setConfiguratorVO(configuratorVO);
+        } else if (mapping.getPath().equals("/TargetColumnMappingLaunch")) {
+        	System.out.println(configuratorForm.getConfiguratorVO().getConfiguratorInterfaceColumnVOList());
         }
         return mapping.findForward(forwardName);
     }

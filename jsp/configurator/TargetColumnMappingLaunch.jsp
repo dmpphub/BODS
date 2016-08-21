@@ -151,8 +151,8 @@
 	<nested:root name="configuratorForm">
 		<html:form styleId="ldrForm" action="ConfiguratorColumnDefinition">
 			<nested:nest property="configuratorVO">
-				<nested:nest property="configuratorInterfaceColumnVO">
-					<div id="pageContentDivId">
+				<div id="pageContentDivId">
+					<nested:nest property="configuratorInterfaceColumnVO">
 						<div class="div-table">
 							<div class="div-table-row">
 								<div class="div-table-col" style="width: 200px;">
@@ -178,6 +178,7 @@
 								</div>
 							</div>
 						</div>
+						</nested:nest>
 						<br/>
 						<table cellpadding="0" cellspacing="0" border="0" width="" style="border:1px solid black;width: 80%;margin-left: 120px;" class="cs-sap-table">
 			        		 <thead>
@@ -218,7 +219,6 @@
 						<button class="btn waves-effect waves-light" type="button" onclick="callExecute()">Save</button>
 					</center>
 				</nested:nest>
-			</nested:nest>
 		</html:form>
 	</nested:root>
 </html:html>

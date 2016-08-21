@@ -27,7 +27,7 @@
 									class="fa fa-space-shuttle nav_icon"></i>Configurator Launch
 							</a></li>
 							<li><a href="/bods/ConfiguratorList.etl" class=" hvr-bounce-to-right"> <i
-									class="fa fa-space-shuttle nav_icon"></i>ConfiguratorList
+									class="fa fa-space-shuttle nav_icon"></i>Configurator List
 							</a></li>
 						</ul></li>
 					<li><a href="#" class=" hvr-bounce-to-right"><i
