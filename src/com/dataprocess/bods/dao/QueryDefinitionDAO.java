@@ -169,7 +169,7 @@ public final class QueryDefinitionDAO {
                 while (rs.next()) {
                     definitionVO = new QueryDefinitionVO();
                     definitionVO.setSourceConfigConnection(rs.getString("CONNECTION_NAME"));
-                    definitionVO.setSourceConfigNameId(rs.getInt("SOURCE_CFG_ID"));
+                    definitionVO.setSourceConfiguratorId(rs.getInt("SOURCE_CFG_ID"));
                     definitionVO.setSourceConfigName(rs.getString("SOURCE_CFG_NAME"));
                     queryDefinitionVO.getQueryDefinitionVOList().add(definitionVO);
                 }
@@ -195,7 +195,7 @@ public final class QueryDefinitionDAO {
         try {
             session = HibernateSessionManager.getHibernateSession();
             criteria = session.createCriteria(QueryDefinitionEO.class);
-            criteria.add(Restrictions.eq("sourceConfiguratorId", queryDefinitionVO.getSourceConfigNameId()));
+            criteria.add(Restrictions.eq("sourceConfiguratorId", queryDefinitionVO.getSourceConfiguratorId()));
             queryDefinitionEO = (QueryDefinitionEO) criteria.uniqueResult();
         } catch (Exception exception) {
             throw new BODSException("ConfiguratorDAO", "createStagingTable", exception.getMessage());

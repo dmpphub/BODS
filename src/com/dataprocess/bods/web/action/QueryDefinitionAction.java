@@ -65,9 +65,9 @@ public class QueryDefinitionAction extends Action {
             queryDefinitionHandler.fetchQueryDefinitionList(queryDefinitionForm.getQueryDefinitionVO());
         } else if (mapping.getPath().equals("/FetchQueryDefinitionDetails")) {
             queryDefinitionHandler = new QueryDefinitionHandler();
-            if (request.getParameter("sourceConfigNameId") != null) {
-                queryDefinitionForm.getQueryDefinitionVO().setSourceConfigNameId(
-                    Integer.parseInt(request.getParameter("sourceConfigNameId")));
+            if (request.getParameter("sourceConfiguratorId") != null) {
+                queryDefinitionForm.getQueryDefinitionVO().setSourceConfiguratorId(
+                    Integer.parseInt(request.getParameter("sourceConfiguratorId")));
             }
             queryDefinitionVO =
                 queryDefinitionHandler.fetchQueryDefinitionDetails(queryDefinitionForm.getQueryDefinitionVO());

@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="css/jquery.dataTables.min.css">
 <script>
 	function fetchRecord(count) {
-		location.href = '/bods/FetchQueryDefinitionDetails.etl?sourceConfigNameId='+document.getElementById("sourceConfiguratorId"+count).value;
+		location.href = '/bods/FetchQueryDefinitionDetails.etl?sourceConfiguratorId='+document.getElementById("sourceConfiguratorId"+count).value;
 	}
 </script>
 <style>
