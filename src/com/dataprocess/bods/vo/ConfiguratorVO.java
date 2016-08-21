@@ -81,9 +81,6 @@ public class ConfiguratorVO implements Serializable {
     /** The procedure value. */
     private String procedureValue;
 
-    /** The validation procedure value. */
-    private String validationProcedureValue;
-
     /** The configurator column definition vo list. */
     private List<ConfiguratorColumnDefinitionVO> configuratorColumnDefinitionVOList;
 
@@ -532,24 +529,6 @@ public class ConfiguratorVO implements Serializable {
      */
     public void setProcedureValue(String procedureValue) {
         this.procedureValue = procedureValue;
-    }
-
-    /**
-     * Gets the validation procedure value.
-     *
-     * @return the validation procedure value
-     */
-    public String getValidationProcedureValue() {
-        return validationProcedureValue;
-    }
-
-    /**
-     * Sets the validation procedure value.
-     *
-     * @param validationProcedureValue the new validation procedure value
-     */
-    public void setValidationProcedureValue(String validationProcedureValue) {
-        this.validationProcedureValue = validationProcedureValue;
     }
 
     /**

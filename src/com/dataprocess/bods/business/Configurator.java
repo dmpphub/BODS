@@ -2,6 +2,7 @@ package com.dataprocess.bods.business;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -139,7 +140,7 @@ public final class Configurator {
             stagingTableScript = "";
             stagingTableScript += generatePVTableScripts(pvtableName);
             configuratorDAO.createPrevalidationTable(connection, stagingTableScript, pvtableName);
-            configuratorDAO.insertPrevalidationValues(connection, pvtableName,configuratorVO);
+            configuratorDAO.insertPrevalidationValues(connection, pvtableName, configuratorVO);
         } catch (BODSException bodsException) {
             throw bodsException;
         } catch (Exception exception) {
@@ -336,9 +337,11 @@ public final class Configurator {
         ConfiguratorProcedureCreation configuratorProcedureCreation = null;
         BytesUtil bytesUtil = null;
         SpringBeanUtils beanUtils = null;
+        Set<ConfiguratorBinariesEO> configuratorBinariesEOSet = null;
         try {
             bytesUtil = new BytesUtil();
             beanUtils = new SpringBeanUtils();
+            configuratorBinariesEOSet = new HashSet<ConfiguratorBinariesEO>();
             configuratorProcedureCreation = new ConfiguratorProcedureCreation();
             configuratorDAO = new ConfiguratorDAO();
             configuratorEO = new ConfiguratorEO();
@@ -347,7 +350,8 @@ public final class Configurator {
             configuratorProcedureCreation.createValidationProcedure(configuratorVO);
             configuratorBinariesEO.setObject(bytesUtil.toByteArray(configuratorVO));
             configuratorEO = (ConfiguratorEO) beanUtils.populateToEntityObject(configuratorVO, configuratorEO);
-            configuratorEO.setConfiguratorBinariesEO(configuratorBinariesEO);
+            configuratorBinariesEOSet.add(configuratorBinariesEO);
+            configuratorEO.setConfiguratorBinariesEOSet(configuratorBinariesEOSet);
             configuratorEO = configuratorDAO.saveConfiguratorDetails(configuratorEO);
             if (configuratorEO.getConfiguratorId() > 0) {
                 configuratorVO.setConfiguratorId(configuratorEO.getConfiguratorId());

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -392,6 +393,9 @@ public final class ConfiguratorDAO {
     /**
      * Insert prevalidation values.
      *
+     * @param connection the connection
+     * @param pvTableName the pv table name
+     * @param configuratorVO the configurator vo
      * @throws BODSException the bODS exception
      */
     public void insertPrevalidationValues(Connection connection, String pvTableName, ConfiguratorVO configuratorVO)
@@ -525,5 +529,44 @@ public final class ConfiguratorDAO {
             jdbcConnectionManager.closeConnection(connection, preparedStatement, resultSet);
         }
         return sourceQuery;
+    }
+
+    /**
+     * Builds the staging dc flag status.
+     *
+     * @param connection the connection
+     * @param loaderExecutionId the loader execution id
+     * @param stagingTableName the staging table name
+     * @throws BODSException the bODS exception
+     */
+    public void buildStagingDCFlagStatus(Connection connection, int loaderExecutionId, String stagingTableName)
+        throws BODSException {
+        StringBuffer dcStatus = null;
+        String procedure = "";
+        PreparedStatement preparedStatement = null;
+        try {
+            dcStatus = new StringBuffer();
+            dcStatus.append(" BEGIN \n");
+            dcStatus.append(" UPDATE " + stagingTableName + " SET DC_FLAG ='S' \n");
+            dcStatus.append(" WHERE STATUS_CODE = 'S' AND EXECUTION_ID = ##EXECUTION_ID##; \n");
+            dcStatus.append(" UPDATE " + stagingTableName + " SET DC_FLAG ='E' \n");
+            dcStatus.append(" WHERE STATUS_CODE = 'E' AND EXECUTION_ID = ##EXECUTION_ID##; \n");
+            dcStatus.append(" COMMIT; \n");
+            dcStatus.append(" END; \n");
+            procedure = dcStatus.toString().replaceAll("##EXECUTION_ID##", String.valueOf(loaderExecutionId));
+            System.out.println("After DC Flag Replace Value :\n" + procedure);
+            preparedStatement = connection.prepareCall(procedure);
+            preparedStatement.executeQuery();
+        } catch (Exception exception) {
+            throw new BODSException("ConfiguratorDAO", "getExtractQueryFromDB", exception.getMessage());
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException sqlException) {
+                    throw new BODSException("ConfiguratorDAO", "getExtractQueryFromDB", sqlException.getMessage());
+                }
+            }
+        }
     }
 }

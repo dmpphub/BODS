@@ -2,14 +2,13 @@ package com.dataprocess.bods.vo;
 
 import java.io.Serializable;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ConfiguratorValidation.
  */
 public final class ConfiguratorValidationVO implements Serializable {
 
-    /**
-     * 
-     */
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6175971727580092067L;
 
     /** The name. */
@@ -65,6 +64,9 @@ public final class ConfiguratorValidationVO implements Serializable {
 
     /** The validation conversion. */
     private String validationConversion;
+
+    /** The validation procedure value. */
+    private String validationProcedureValue;
 
     /**
      * Gets the name.
@@ -372,11 +374,39 @@ public final class ConfiguratorValidationVO implements Serializable {
         this.validationErrorMessage = validationErrorMessage;
     }
 
+    /**
+     * Gets the validation conversion.
+     *
+     * @return the validation conversion
+     */
     public String getValidationConversion() {
         return validationConversion;
     }
 
+    /**
+     * Sets the validation conversion.
+     *
+     * @param validationConversion the new validation conversion
+     */
     public void setValidationConversion(String validationConversion) {
         this.validationConversion = validationConversion;
+    }
+
+    /**
+     * Gets the validation procedure value.
+     *
+     * @return the validation procedure value
+     */
+    public String getValidationProcedureValue() {
+        return validationProcedureValue;
+    }
+
+    /**
+     * Sets the validation procedure value.
+     *
+     * @param validationProcedureValue the new validation procedure value
+     */
+    public void setValidationProcedureValue(String validationProcedureValue) {
+        this.validationProcedureValue = validationProcedureValue;
     }
 }

@@ -1,5 +1,7 @@
 package com.dataprocess.bods.entity;
 
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -16,6 +18,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Formula;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ConfiguratorEO.
  */
@@ -66,11 +69,11 @@ public class ConfiguratorEO {
     @Column(name = "SOURCE_CONFIGURATOR_ID")
     private int sourceConfigurationId;
 
-    /** The configurator binaries eo. */
+    /** The configurator binaries eo set. */
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "CONFIGURATOR_ID")
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(FetchMode.JOIN)
-    private ConfiguratorBinariesEO configuratorBinariesEO;
+    private Set<ConfiguratorBinariesEO> configuratorBinariesEOSet;
 
     /**
      * Gets the configurator id.
@@ -253,21 +256,21 @@ public class ConfiguratorEO {
     }
 
     /**
-     * Gets the configurator binaries eo.
+     * Gets the configurator binaries eo set.
      *
-     * @return the configurator binaries eo
+     * @return the configurator binaries eo set
      */
-    public ConfiguratorBinariesEO getConfiguratorBinariesEO() {
-        return configuratorBinariesEO;
+    public Set<ConfiguratorBinariesEO> getConfiguratorBinariesEOSet() {
+        return configuratorBinariesEOSet;
     }
 
     /**
-     * Sets the configurator binaries eo.
+     * Sets the configurator binaries eo set.
      *
-     * @param configuratorBinariesEO the new configurator binaries eo
+     * @param configuratorBinariesEOSet the new configurator binaries eo set
      */
-    public void setConfiguratorBinariesEO(ConfiguratorBinariesEO configuratorBinariesEO) {
-        this.configuratorBinariesEO = configuratorBinariesEO;
+    public void setConfiguratorBinariesEOSet(Set<ConfiguratorBinariesEO> configuratorBinariesEOSet) {
+        this.configuratorBinariesEOSet = configuratorBinariesEOSet;
     }
 
 }

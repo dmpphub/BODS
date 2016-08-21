@@ -39,23 +39,23 @@ public final class ConfiguratorBinariesEO {
         return configuratorId;
     }
 
-    /**
+   /* *//**
      * Gets the configurator binary id.
      *
      * @return the configurator binary id
-     */
+     *//*
     public int getConfiguratorBinaryId() {
         return configuratorBinaryId;
     }
 
-    /**
+    *//**
      * Sets the configurator binary id.
      *
      * @param configuratorBinaryId the new configurator binary id
-     */
+     *//*
     public void setConfiguratorBinaryId(int configuratorBinaryId) {
         this.configuratorBinaryId = configuratorBinaryId;
-    }
+    }*/
 
     /**
      * Sets the configurator id.

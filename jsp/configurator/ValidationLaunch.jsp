@@ -199,7 +199,7 @@
 	function conversionStr() {
 		var cont = '';
 		if($('#leftExpressionConversionValue').val() != '' && $('#rightExpressionConversionValue').val() != '') {
-			cont =  "PVQUERY." + $('#rightExpressionConversionValue').val() + ' = ' + $('#leftExpressionConversionValue').val();
+			cont = $('#rightExpressionConversionValue').val() + ' = ' + "PVQUERY." + $('#leftExpressionConversionValue').val();
 		}
 		return cont;
 	}
