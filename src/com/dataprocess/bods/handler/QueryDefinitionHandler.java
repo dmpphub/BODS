@@ -21,18 +21,17 @@ public class QueryDefinitionHandler {
 		return hasCompleted;
 	}
 
-	public boolean saveQueryDefinition(QueryDefinitionVO queryDefinitionVO) {
+	public QueryDefinitionVO saveQueryDefinition(QueryDefinitionVO queryDefinitionVO) {
 		QueryDefinitionBusiness business = null;
-		boolean hasCompleted = false;
 		
 		try {
 			business = new QueryDefinitionBusiness();
-			hasCompleted = business.saveQueryDefinition(queryDefinitionVO);
+			queryDefinitionVO = business.saveQueryDefinition(queryDefinitionVO);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return hasCompleted;
+		return queryDefinitionVO;
 	}
 
 	public ArrayList<QueryDefinitionVO> getSourceConfigConnectionList() {
@@ -66,7 +65,7 @@ public class QueryDefinitionHandler {
 		
 		try {
 			business = new QueryDefinitionBusiness();
-			business.fetchQueryDefinitionDetails(queryDefinitionVO);
+			queryDefinitionVO = business.fetchQueryDefinitionDetails(queryDefinitionVO);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

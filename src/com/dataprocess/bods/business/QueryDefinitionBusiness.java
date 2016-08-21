@@ -39,12 +39,12 @@ public class QueryDefinitionBusiness {
      * @param queryDefinitionVO the query definition vo
      * @return true, if successful
      */
-    public boolean saveQueryDefinition(QueryDefinitionVO queryDefinitionVO) {
+    public QueryDefinitionVO saveQueryDefinition(QueryDefinitionVO queryDefinitionVO) {
         QueryDefinitionDAO queryDefinitionDAO = null;
         SpringBeanUtils beanUtils = null;
         BytesUtil bytesUtil = null;
         QueryDefinitionEO queryDefinitionEO = null;
-        boolean hasCompleted = false;
+        
         try {
             beanUtils = new SpringBeanUtils();
             queryDefinitionDAO = new QueryDefinitionDAO();
@@ -53,12 +53,13 @@ public class QueryDefinitionBusiness {
             queryDefinitionEO.setObject(bytesUtil.toByteArray(queryDefinitionVO));
             queryDefinitionEO =
                 (QueryDefinitionEO) beanUtils.populateToEntityObject(queryDefinitionVO, queryDefinitionEO);
-            hasCompleted = queryDefinitionDAO.saveQueryDefinition(queryDefinitionEO);
+            queryDefinitionEO = queryDefinitionDAO.saveQueryDefinition(queryDefinitionEO);
+           	queryDefinitionVO.setSourceConfiguratorId(queryDefinitionEO.getSourceConfiguratorId());
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return hasCompleted;
+        return queryDefinitionVO;
     }
 
     /**
