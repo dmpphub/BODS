@@ -5,59 +5,77 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class JDBCConnectionManager.
+ */
 public final class JDBCConnectionManager {
 
-	private Connection connection;
+    /** The connection. */
+    private Connection connection;
 
-	/**
-	 * @return the connection
-	 */
-	public Connection getConnection() {
-		return connection;
-	}
+    /**
+     * Gets the connection.
+     *
+     * @return the connection
+     */
+    public Connection getConnection() {
+        return connection;
+    }
 
-	/**
-	 * @param connection
-	 *            the connection to set
-	 */
-	public void setConnection(Connection connection) {
-		this.connection = connection;
-	}
+    /**
+     * Sets the connection.
+     *
+     * @param connection the connection to set
+     */
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
 
-	public boolean getJDBCConnection() {
-		boolean connectionFlag = false;
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			connection = DriverManager.getConnection(
-					"jdbc:oracle:thin:@192.168.0.254:1521:ORCL", "snipers", "snipers");
-			
-			if (connection != null) {
-				connectionFlag = true;
-			}
+    /**
+     * Gets the jDBC connection.
+     *
+     * @return the jDBC connection
+     */
+    public boolean getJDBCConnection() {
+        boolean connectionFlag = false;
+        try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+            connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.254:1521:ORCL", "snipers", "snipers");
 
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-		return connectionFlag;
-	}
+            if (connection != null) {
+                connectionFlag = true;
+            }
 
-	public void closeConnection(Connection connection, Statement statement,
-			ResultSet resultSet) {
-		try {
-			if (resultSet != null) {
-				resultSet.close();
-			}
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return connectionFlag;
+    }
 
-			if (statement != null) {
-				statement.close();
-			}
+    /**
+     * Close connection.
+     *
+     * @param connection the connection
+     * @param statement the statement
+     * @param resultSet the result set
+     */
+    public void closeConnection(Connection connection, Statement statement, ResultSet resultSet) {
+        try {
+            if (resultSet != null) {
+                resultSet.close();
+            }
 
-			if ((connection != null) && (!(connection.isClosed()))) {
-				connection.close();
-			}
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
+            if (statement != null) {
+                statement.close();
+            }
 
-	}
+            if ((connection != null) && (!(connection.isClosed()))) {
+                connection.close();
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+
+    }
 }

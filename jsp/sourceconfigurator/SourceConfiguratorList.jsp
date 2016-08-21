@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="css/jquery.dataTables.min.css">
 <script>
 	function fetchRecord(count) {
-		location.href = '/bods/FetchQueryDefinitionDetails.etl?sourceConfigNameId='+document.getElementById("sourceConfigNameId"+count).value;
+		location.href = '/bods/FetchQueryDefinitionDetails.etl?sourceConfigNameId='+document.getElementById("sourceConfiguratorId"+count).value;
 	}
 </script>
 <style>
@@ -68,7 +68,7 @@ input[type="text"], input[type="Password"], select {
                 			<tr onclick="fetchRecord('<%= count %>')" style="cursor: pointer;">
                 				<td>
                 					<nested:write property="sourceConfigName"/>
-                					<nested:hidden property="sourceConfigNameId" styleId="<%= \"sourceConfigNameId\" + count %>"/>
+                					<nested:hidden property="sourceConfiguratorId" styleId="<%= \"sourceConfiguratorId\" + count %>"/>
                 				</td>
                 				<td>
                 					<nested:write property="sourceConfigConnection"/>

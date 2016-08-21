@@ -4,24 +4,40 @@ import org.apache.struts.action.ActionForm;
 
 import com.dataprocess.bods.vo.QueryDefinitionVO;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class QueryDefinitionForm.
+ */
 public class QueryDefinitionForm extends ActionForm {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1894016333535176850L;
-	
-	private QueryDefinitionVO queryDefinitionVO;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1894016333535176850L;
 
-	public QueryDefinitionForm() {
-		setQueryDefinitionVO(new QueryDefinitionVO());
-	}
+    /** The query definition vo. */
+    private QueryDefinitionVO queryDefinitionVO;
 
-	public QueryDefinitionVO getQueryDefinitionVO() {
-		return queryDefinitionVO;
-	}
+    /**
+     * Instantiates a new query definition form.
+     */
+    public QueryDefinitionForm() {
+        setQueryDefinitionVO(new QueryDefinitionVO());
+    }
 
-	public void setQueryDefinitionVO(QueryDefinitionVO queryDefinitionVO) {
-		this.queryDefinitionVO = queryDefinitionVO;
-	}
+    /**
+     * Gets the query definition vo.
+     *
+     * @return the query definition vo
+     */
+    public QueryDefinitionVO getQueryDefinitionVO() {
+        return queryDefinitionVO;
+    }
+
+    /**
+     * Sets the query definition vo.
+     *
+     * @param queryDefinitionVO the new query definition vo
+     */
+    public void setQueryDefinitionVO(QueryDefinitionVO queryDefinitionVO) {
+        this.queryDefinitionVO = queryDefinitionVO;
+    }
 }

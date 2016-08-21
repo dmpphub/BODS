@@ -19,7 +19,9 @@
                 <nested:present property="queryDefinitionLineVOList">
             		<nested:iterate property="queryDefinitionLineVOList" id="queryDefinitionLineVOList" 
                				type="com.dataprocess.bods.vo.QueryDefinitionLineVO" indexId="count">
-						<th><nested:write property="columnName"/></th>               				
+               		<nested:notEqual property="conversionColumn" value="Y">
+						<th><nested:write property="columnName"/></th>       
+					</nested:notEqual>        				
                		</nested:iterate>		
             	</nested:present>
             </tr>
@@ -42,9 +44,11 @@
 						<nested:present property="queryDefinitionDataVOList">
 							<nested:iterate property="queryDefinitionDataVOList" id="queryDefinitionDataVOList" 
 	               				type="com.dataprocess.bods.vo.QueryDefinitionDataVO" indexId="count1">
+	               				<nested:notEqual property="uniqueFlag" value="Y">
 	               					<td>
 	               						<nested:write property="dataValue"/>
 	               					</td>
+	               				</nested:notEqual>
 	               			</nested:iterate>							
 						</nested:present>
 					</tr>               				

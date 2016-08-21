@@ -6,9 +6,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -19,244 +16,196 @@ import com.dataprocess.bods.entity.QueryDefinitionEO;
 import com.dataprocess.bods.util.BODSException;
 import com.dataprocess.bods.util.connectionutil.HibernateSessionManager;
 import com.dataprocess.bods.util.connectionutil.JDBCConnectionManager;
-import com.dataprocess.bods.vo.QueryDefinitionDataVO;
 import com.dataprocess.bods.vo.QueryDefinitionLineVO;
 import com.dataprocess.bods.vo.QueryDefinitionVO;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class QueryDefinitionDAO.
+ */
 public final class QueryDefinitionDAO {
 
-	public boolean validateQueryDefinition(QueryDefinitionVO queryDefinitionVO) {
-		JDBCConnectionManager jdbcConnectionManager = null;
-		QueryDefinitionLineVO queryDefinitionLineVO = null;
-		QueryDefinitionDataVO queryDefinitionDataVO = null;
-		HashSet<QueryDefinitionLineVO> queryDefinitionLineVOSet = null;
-		Map<Integer, String> columnCountMap = new LinkedHashMap<Integer, String>();
-		List<QueryDefinitionDataVO> dataVOList = null;
-		Connection connection = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		ResultSetMetaData metaData = null;
-		boolean hasValidated = false;
-		int count = 0;
+    /**
+     * Validate query definition.
+     *
+     * @param queryDefinitionVO the query definition vo
+     * @return true, if successful
+     */
+    public boolean validateQueryDefinition(QueryDefinitionVO queryDefinitionVO) throws BODSException {
+        boolean hasValidated = false;
+        String query = "";
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        ResultSetMetaData metaData = null;
+        JDBCConnectionManager jdbcConnectionManager = null;
+        QueryDefinitionLineVO queryDefinitionLineVO = null;
+        HashSet<QueryDefinitionLineVO> queryDefinitionLineVOSet = null;
+        try {
+            jdbcConnectionManager = new JDBCConnectionManager();
+            if (jdbcConnectionManager.getJDBCConnection()) {
+                connection = jdbcConnectionManager.getConnection();
+                query = queryDefinitionVO.getSqlQuery().replaceAll(";", "") + " WHERE 1 = 2 ";
+                ps = connection.prepareStatement(query);
+                rs = ps.executeQuery();
+                metaData = rs.getMetaData();
+                if (metaData != null) {
+                    queryDefinitionVO.setQueryDefinitionLineVOList(new ArrayList<QueryDefinitionLineVO>());
+                    for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                        queryDefinitionLineVO = new QueryDefinitionLineVO();
+                        queryDefinitionLineVO.setColumnName(metaData.getColumnName(i));
+                        if (metaData.getColumnTypeName(i).equals("VARCHAR")
+                            || metaData.getColumnTypeName(i).equals("VARCHAR2")
+                            || metaData.getColumnTypeName(i).equals("CHAR")) {
+                            queryDefinitionLineVO.setDataType("STRING");
+                        } else {
+                            queryDefinitionLineVO.setDataType(metaData.getColumnTypeName(i));
+                        }
+                        queryDefinitionVO.getQueryDefinitionLineVOList().add(queryDefinitionLineVO);
+                    }
+                    hasValidated = true;
+                }
+                if (queryDefinitionVO.getQueryDefinitionLineVOList() != null
+                    && queryDefinitionVO.getQueryDefinitionLineVOList().size() > 0) {
+                    queryDefinitionLineVOSet =
+                        new HashSet<QueryDefinitionLineVO>(queryDefinitionVO.getQueryDefinitionLineVOList());
+                    queryDefinitionVO.setSourceConfiguratorLineVOSet(queryDefinitionLineVOSet);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BODSException("QueryDefinitionHandler", "validateQueryDefinition", exception.getMessage());
+        } finally {
+            jdbcConnectionManager.closeConnection(connection, ps, rs);
+        }
+        return hasValidated;
+    }
 
-		try {
-			jdbcConnectionManager = new JDBCConnectionManager();
+    /**
+     * Save query definition.
+     *
+     * @param queryDefinitionEO the query definition eo
+     * @return the query definition eo
+     */
+    public QueryDefinitionEO saveQueryDefinition(QueryDefinitionEO queryDefinitionEO) throws BODSException {
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = HibernateSessionManager.getHibernateSession();
+            transaction = session.beginTransaction();
+            queryDefinitionEO = (QueryDefinitionEO) session.merge(queryDefinitionEO);
+            transaction.commit();
+        } catch (Exception exception) {
+            transaction.rollback();
+            throw new BODSException("QueryDefinitionDAO", "saveQueryDefinition", exception.getMessage());
+        } finally {
+            session.close();
+        }
+        return queryDefinitionEO;
+    }
 
-			if (jdbcConnectionManager.getJDBCConnection()) {
-				connection = jdbcConnectionManager.getConnection();
-				ps = connection.prepareStatement(queryDefinitionVO.getSqlQuery().replaceAll(";", ""),
-						ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE,
-						ResultSet.HOLD_CURSORS_OVER_COMMIT);
-				rs = ps.executeQuery();
-				metaData = rs.getMetaData();
+    /**
+     * Gets the source config connection list.
+     *
+     * @return the source config connection list
+     * @throws BODSException the bODS exception
+     */
+    public ArrayList<QueryDefinitionVO> getSourceConfigConnectionList() throws BODSException {
+        StringBuffer queryBuffer = null;
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        QueryDefinitionVO definitionVO = null;
+        ArrayList<QueryDefinitionVO> sourceConfigConnctionList = null;
+        JDBCConnectionManager jdbcConnectionManager = null;
+        try {
+            jdbcConnectionManager = new JDBCConnectionManager();
+            queryBuffer = new StringBuffer();
+            sourceConfigConnctionList = new ArrayList<QueryDefinitionVO>();
+            if (jdbcConnectionManager.getJDBCConnection()) {
+                queryBuffer.append(" SELECT CONNECTION_NAME, CONNECTION_ID ");
+                queryBuffer.append(" FROM BODS_CONNECTION_CFG");
+                connection = jdbcConnectionManager.getConnection();
+                ps = connection.prepareStatement(queryBuffer.toString());
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    definitionVO = new QueryDefinitionVO();
+                    definitionVO.setSourceConfigConnection(rs.getString("CONNECTION_NAME"));
+                    definitionVO.setSourceConfigConnectionId(rs.getInt("CONNECTION_ID"));
+                    sourceConfigConnctionList.add(definitionVO);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BODSException("QueryDefinitionDAO", "getSourceConfigConnectionList", exception.getMessage());
+        } finally {
+            jdbcConnectionManager.closeConnection(connection, ps, rs);
+        }
+        return sourceConfigConnctionList;
+    }
 
-				if (metaData != null) {
-					queryDefinitionVO.setQueryDefinitionLineVOList(new ArrayList<QueryDefinitionLineVO>());
+    /**
+     * Fetch query definition list.
+     *
+     * @param queryDefinitionVO the query definition vo
+     */
+    public void fetchQueryDefinitionList(QueryDefinitionVO queryDefinitionVO) throws BODSException {
+        StringBuffer queryBuffer = null;
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        QueryDefinitionVO definitionVO = null;
+        JDBCConnectionManager jdbcConnectionManager = null;
+        try {
+            jdbcConnectionManager = new JDBCConnectionManager();
+            queryBuffer = new StringBuffer();
+            queryDefinitionVO.setQueryDefinitionVOList(new ArrayList<QueryDefinitionVO>());
+            if (jdbcConnectionManager.getJDBCConnection()) {
+                queryBuffer.append(" SELECT BODS_CON.CONNECTION_NAME, BODS_SOURCE.SOURCE_CFG_NAME, ");
+                queryBuffer.append(" BODS_SOURCE.SOURCE_CFG_ID FROM ");
+                queryBuffer.append(" BODS_CONNECTION_CFG BODS_CON, BODS_SOURCE_CFG BODS_SOURCE WHERE ");
+                queryBuffer.append(" BODS_CON.CONNECTION_ID = BODS_SOURCE.CONNECTION_ID ");
+                connection = jdbcConnectionManager.getConnection();
+                ps = connection.prepareStatement(queryBuffer.toString());
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    definitionVO = new QueryDefinitionVO();
+                    definitionVO.setSourceConfigConnection(rs.getString("CONNECTION_NAME"));
+                    definitionVO.setSourceConfigNameId(rs.getInt("SOURCE_CFG_ID"));
+                    definitionVO.setSourceConfigName(rs.getString("SOURCE_CFG_NAME"));
+                    queryDefinitionVO.getQueryDefinitionVOList().add(definitionVO);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BODSException("QueryDefinitionDAO", "fetchQueryDefinitionList", exception.getMessage());
+        } finally {
+            jdbcConnectionManager.closeConnection(connection, ps, rs);
+        }
+    }
 
-					for (int i = 1; i <= metaData.getColumnCount(); i++) {
-						queryDefinitionLineVO = new QueryDefinitionLineVO();
-						queryDefinitionLineVO.setColumnName(metaData.getColumnName(i));
-
-						if (metaData.getColumnTypeName(i).equals("VARCHAR")
-								|| metaData.getColumnTypeName(i).equals("VARCHAR2")
-								|| metaData.getColumnTypeName(i).equals("CHAR")) {
-							queryDefinitionLineVO.setDataType("STRING");
-						} else {
-							queryDefinitionLineVO.setDataType(metaData.getColumnTypeName(i));
-						}
-
-						queryDefinitionVO.getQueryDefinitionLineVOList().add(queryDefinitionLineVO);
-						columnCountMap.put(i, queryDefinitionLineVO.getDataType());
-					}
-					
-					if (queryDefinitionVO.getQueryDefinitionLineVOList() != null && 
-							queryDefinitionVO.getQueryDefinitionLineVOList().size() > 0) {
-						rs.beforeFirst();
-						
-						
-						while (rs.next()) {
-							if (queryDefinitionVO.getQueryDefinitionDataVOList() == null) {
-								queryDefinitionVO.setQueryDefinitionDataVOList(new ArrayList<QueryDefinitionDataVO>());
-							}
-							
-							dataVOList = new ArrayList<QueryDefinitionDataVO>();
-							for (Map.Entry<Integer, String> entry : columnCountMap.entrySet()) {
-								
-								queryDefinitionDataVO = new QueryDefinitionDataVO();
-								//System.out.println("Key : " + entry.getKey() + " Value : " + entry.getValue());
-								if (entry.getValue().equals("STRING")) {
-									queryDefinitionDataVO.setDataValue(rs.getString(entry.getKey()));
-								} else {
-									queryDefinitionDataVO.setDataValue(String.valueOf(rs.getInt(entry.getKey())));
-								}
-								dataVOList.add(queryDefinitionDataVO);
-							}
-							queryDefinitionVO.getQueryDefinitionDataVOList().add(queryDefinitionDataVO);
-							queryDefinitionVO.getQueryDefinitionDataVOList().get(count).setQueryDefinitionDataVOList(new ArrayList<QueryDefinitionDataVO>());
-							queryDefinitionVO.getQueryDefinitionDataVOList().get(count).setQueryDefinitionDataVOList(dataVOList);
-							count++;
-						}
-						
-					}
-						/*queryDefinitionVO.getQueryDefinitionLineVOList().get(i - 1)
-								.setQueryDefinitionDataVOList(new ArrayList<QueryDefinitionDataVO>());
-
-						while (rs.next()) {
-							queryDefinitionDataVO = new QueryDefinitionDataVO();
-
-							if (metaData.getColumnTypeName(i).equals("VARCHAR")
-									|| metaData.getColumnTypeName(i).equals("VARCHAR2")
-									|| metaData.getColumnTypeName(i).equals("CHAR")) {
-								queryDefinitionDataVO.setDataValue(rs.getString(queryDefinitionLineVO.getColumnName()));
-
-							} else if (metaData.getColumnTypeName(i).equals("NUMBER")) {
-								queryDefinitionDataVO
-										.setDataValue(String.valueOf(rs.getInt(queryDefinitionLineVO.getColumnName())));
-							}
-							queryDefinitionVO.getQueryDefinitionLineVOList().get(i - 1).getQueryDefinitionDataVOList()
-									.add(queryDefinitionDataVO);
-						}
-						rs.beforeFirst();*/
-					}
-				}
-				if (queryDefinitionVO.getQueryDefinitionLineVOList() != null
-						&& queryDefinitionVO.getQueryDefinitionLineVOList().size() > 0) {
-					queryDefinitionLineVOSet = new HashSet<QueryDefinitionLineVO>(
-							queryDefinitionVO.getQueryDefinitionLineVOList());
-					queryDefinitionVO.setSourceConfiguratorLineVOSet(queryDefinitionLineVOSet);
-				}
-				hasValidated = true;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		} finally {
-			jdbcConnectionManager.closeConnection(connection, ps, rs);
-		}
-		return hasValidated;
-	}
-
-	public QueryDefinitionEO saveQueryDefinition(QueryDefinitionEO queryDefinitionEO) {
-		Session session = null;
-		Transaction transaction = null;
-		
-		try {
-			session = HibernateSessionManager.getHibernateSession();
-			transaction = session.beginTransaction();
-			queryDefinitionEO = (QueryDefinitionEO) session.merge(queryDefinitionEO);
-			transaction.commit();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			transaction.rollback();
-
-		} finally {
-			session.close();
-		}
-		return queryDefinitionEO;
-	}
-
-	public ArrayList<QueryDefinitionVO> getSourceConfigConnectionList() {
-		JDBCConnectionManager jdbcConnectionManager = null;
-		Connection connection = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		QueryDefinitionVO definitionVO = null;
-		ArrayList<QueryDefinitionVO> sourceConfigConnctionList = null;
-		StringBuffer queryBuffer = null;
-
-		try {
-			jdbcConnectionManager = new JDBCConnectionManager();
-			queryBuffer = new StringBuffer();
-			sourceConfigConnctionList = new ArrayList<QueryDefinitionVO>();
-
-			if (jdbcConnectionManager.getJDBCConnection()) {
-				queryBuffer.append(" SELECT ");
-				queryBuffer.append(" CONNECTION_NAME, CONNECTION_ID ");
-				queryBuffer.append(" FROM ");
-				queryBuffer.append(" BODS_CONNECTION_CFG ");
-				/*queryBuffer.append(" WHERE ");
-				queryBuffer.append(" CONNECTION_MODE_TYPE = 'SOURCE' ");*/
-
-				connection = jdbcConnectionManager.getConnection();
-				ps = connection.prepareStatement(queryBuffer.toString());
-				rs = ps.executeQuery();
-
-				while (rs.next()) {
-					definitionVO = new QueryDefinitionVO();
-					definitionVO.setSourceConfigConnection(rs.getString("CONNECTION_NAME"));
-					definitionVO.setSourceConfigConnectionId(rs.getInt("CONNECTION_ID"));
-					sourceConfigConnctionList.add(definitionVO);
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			jdbcConnectionManager.closeConnection(connection, ps, rs);
-		}
-		return sourceConfigConnctionList;
-	}
-
-	public void fetchQueryDefinitionList(QueryDefinitionVO queryDefinitionVO) {
-		JDBCConnectionManager jdbcConnectionManager = null;
-		Connection connection = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		QueryDefinitionVO definitionVO = null;
-		StringBuffer queryBuffer = null;
-
-		try {
-			jdbcConnectionManager = new JDBCConnectionManager();
-			queryBuffer = new StringBuffer();
-			queryDefinitionVO.setQueryDefinitionVOList(new ArrayList<QueryDefinitionVO>());
-
-			if (jdbcConnectionManager.getJDBCConnection()) {
-				queryBuffer.append(" SELECT ");
-				queryBuffer.append(" BODS_CON.CONNECTION_NAME, BODS_SOURCE.SOURCE_CFG_NAME, BODS_SOURCE.SOURCE_CFG_ID ");
-				queryBuffer.append(" FROM ");
-				queryBuffer.append(" BODS_CONNECTION_CFG BODS_CON, BODS_SOURCE_CFG BODS_SOURCE ");
-				queryBuffer.append(" WHERE ");
-				queryBuffer.append(" BODS_CON.CONNECTION_ID = BODS_SOURCE.CONNECTION_ID ");
-
-				connection = jdbcConnectionManager.getConnection();
-				ps = connection.prepareStatement(queryBuffer.toString());
-				rs = ps.executeQuery();
-
-				while (rs.next()) {
-					definitionVO = new QueryDefinitionVO();
-					definitionVO.setSourceConfigConnection(rs.getString("CONNECTION_NAME"));
-					definitionVO.setSourceConfigNameId(rs.getInt("SOURCE_CFG_ID"));
-					definitionVO.setSourceConfigName(rs.getString("SOURCE_CFG_NAME"));
-					queryDefinitionVO.getQueryDefinitionVOList().add(definitionVO);
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			jdbcConnectionManager.closeConnection(connection, ps, rs);
-		}
-	}
-
-	public QueryDefinitionEO fetchQueryDefinitionDetails(QueryDefinitionVO queryDefinitionVO) throws BODSException {
-		Session session = null;
-		Criteria criteria = null;
-		QueryDefinitionEO queryDefinitionEO = null;
-		try {
-			session = HibernateSessionManager.getHibernateSession();
-			criteria = session.createCriteria(QueryDefinitionEO.class);
-			criteria.add(Restrictions.eq("sourceConfiguratorId", queryDefinitionVO.getSourceConfigNameId()));
-			queryDefinitionEO = (QueryDefinitionEO) criteria.uniqueResult();
-			
-		} catch (Exception exception) {
-			throw new BODSException("ConfiguratorDAO", "createStagingTable", exception.getMessage());
-		} finally {
-			if (session != null) {
-				session.clear();
-				session.close();
-			}
-		}
-		return queryDefinitionEO;
-	}
+    /**
+     * Fetch query definition details.
+     *
+     * @param queryDefinitionVO the query definition vo
+     * @return the query definition eo
+     * @throws BODSException the bODS exception
+     */
+    public QueryDefinitionEO fetchQueryDefinitionDetails(QueryDefinitionVO queryDefinitionVO) throws BODSException {
+        Session session = null;
+        Criteria criteria = null;
+        QueryDefinitionEO queryDefinitionEO = null;
+        try {
+            session = HibernateSessionManager.getHibernateSession();
+            criteria = session.createCriteria(QueryDefinitionEO.class);
+            criteria.add(Restrictions.eq("sourceConfiguratorId", queryDefinitionVO.getSourceConfigNameId()));
+            queryDefinitionEO = (QueryDefinitionEO) criteria.uniqueResult();
+        } catch (Exception exception) {
+            throw new BODSException("ConfiguratorDAO", "createStagingTable", exception.getMessage());
+        } finally {
+            if (session != null) {
+                session.clear();
+                session.close();
+            }
+        }
+        return queryDefinitionEO;
+    }
+    
 }

@@ -22,6 +22,7 @@
 								property="sourceConfigConnection" />
 							<nested:hidden styleId="sourceConfigConnectionId"
 								property="sourceConfigConnectionId" />
+							<nested:hidden styleId="sourceConfiguratorId" property="sourceConfiguratorId" />
 						</div>
 						<div class="div-table-col">
 							<span> Source Configure Name </span>

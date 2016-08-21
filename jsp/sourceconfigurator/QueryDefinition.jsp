@@ -80,6 +80,7 @@ input[type="text"], input[type="Password"], select {
 								property="sourceConfigName" />
 							<nested:hidden styleId="sourceConfigNameId"
 								property="sourceConfigNameId" />
+							<nested:hidden styleId="sourceConfiguratorId" property="sourceConfiguratorId" />
 						</div>
 					</div>
 
@@ -130,7 +131,6 @@ input[type="text"], input[type="Password"], select {
 		$(".btn.waves-effect.waves-light").addClass("disabled");
 	}
 	$('#sourceConfigConn').change(function() {
-		/* alert('text :' + $('#sourceConfigConn option:selected').html()); */
 		$('#sourceConfigConnection').val($('#sourceConfigConn option:selected').html());
 	})
 </script>
