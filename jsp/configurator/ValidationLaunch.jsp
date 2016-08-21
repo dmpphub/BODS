@@ -1,7 +1,11 @@
 <%@ page language="java" %><%@ taglib uri="struts-html" prefix="html"%>
 <%@ taglib uri="struts-bean" prefix="bean"%>
 <%@ taglib uri="struts-nested" prefix="nested"%>
-
+<style>
+.left-btn {
+	text-align: right
+}
+</style>
 <script>
 	var queryColumnNameArr ='';
 	var configuratorColumnVOArr = '';
@@ -223,6 +227,9 @@
 		$('#leftExpressionValue').val('');
 		$('#operator').val('');
 	}
+	function fetchValidationList() {
+		location.href='/bods/ValidationList.etl';
+	}
 </script>
 <html:html>
 <head>
@@ -404,6 +411,7 @@
 							<button class="btn waves-effect waves-light" type="button" onclick="callNew()">New</button> &nbsp; &nbsp;
 							<button class="btn waves-effect waves-light" type="submit" onclick="callSubmit()">Save</button> &nbsp; &nbsp;
 							<button class="btn waves-effect waves-light" type="button" onclick="doNextProcess()">Next</button>
+							<button style="margin-left: 100px;" class="btn waves-effect waves-light" type="button" onclick="fetchValidationList()">Validation List</button>	
 						</center> &nbsp;
 					</div>
 				</nested:nest>
