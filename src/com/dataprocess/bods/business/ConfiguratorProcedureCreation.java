@@ -68,7 +68,6 @@ public final class ConfiguratorProcedureCreation {
         List<ConfiguratorValidationVO> preValidationVOList = null;
         try {
             preValidationVOList = configuratorVO.getConfiguratorValidationVOList();
-            preValidationVOList.remove(0);
             if (preValidationVOList != null && preValidationVOList.size() > 0) {
                 for (ConfiguratorValidationVO configuratorValidationVO : preValidationVOList) {
                     procedureContent = new StringBuffer();
