@@ -192,29 +192,110 @@ public final class ConfiguratorHandler {
 
     }
 
-	public ConfiguratorVO fetchConfiguratorList(ConfiguratorVO configuratorVO) throws BODSException {
-		Configurator configurator = null;
-		try {
-			configurator = new Configurator();
-			configurator.fetchConfiguratorList(configuratorVO);
-		} catch (BODSException bodsException) {
-			throw bodsException;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new BODSException("ConfiguratorVO", "fetchQueryDefinitionList", e.getMessage());
-		} 
-		return configuratorVO;
-	}
+    /**
+     * Fetch configurator list.
+     *
+     * @param configuratorVO the configurator vo
+     * @return the configurator vo
+     * @throws BODSException the bODS exception
+     */
+    public ConfiguratorVO fetchConfiguratorList(ConfiguratorVO configuratorVO) throws BODSException {
+        Configurator configurator = null;
+        try {
+            configurator = new Configurator();
+            configurator.fetchConfiguratorList(configuratorVO);
+        } catch (BODSException bodsException) {
+            throw bodsException;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BODSException("ConfiguratorVO", "fetchQueryDefinitionList", e.getMessage());
+        }
+        return configuratorVO;
+    }
 
-	public ConfiguratorVO fetchConfigurationDetails(ConfiguratorVO configuratorVO) {
-		Configurator configurator = null;
-		try {
-			configurator = new Configurator();
-			configuratorVO = configurator.fetchConfigurationDetails(configuratorVO);
-			
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-		return configuratorVO;
-	}
+    /**
+     * Fetch configuration details.
+     *
+     * @param configuratorVO the configurator vo
+     * @return the configurator vo
+     * @throws BODSException the bODS exception
+     */
+    public ConfiguratorVO fetchConfigurationDetails(ConfiguratorVO configuratorVO) throws BODSException {
+        Configurator configurator = null;
+        try {
+            configurator = new Configurator();
+            configuratorVO = configurator.fetchConfigurationDetails(configuratorVO);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            throw new BODSException("ConfiguratorVO", "fetchConfigurationDetails", exception.getMessage());
+        }
+        return configuratorVO;
+    }
+
+    /**
+     * Gets the stagint table detail.
+     *
+     * @param stagingTableName the staging table name
+     * @param dataTemplateName the data template name
+     * @return the stagint table detail
+     * @throws BODSException the bODS exception
+     */
+    public String getStagintTableDetail(String stagingTableName, String dataTemplateName) throws BODSException {
+        String chartContent = "";
+        Configurator configurator = null;
+        try {
+            configurator = new Configurator();
+            chartContent = configurator.getStagingTableDetail(stagingTableName, dataTemplateName);
+        } catch (BODSException bodsException) {
+            throw bodsException;
+        } catch (Exception exception) {
+            throw new BODSException("ConfiguratorVO", "getStagintTableDetail", exception.getMessage());
+        }
+        return chartContent;
+    }
+
+    /**
+     * Gets the prevalidation detail.
+     *
+     * @param stagingTableName the staging table name
+     * @return the prevalidation detail
+     * @throws BODSException the bODS exception
+     */
+    public JSONObject getPrevalidationDetail(String stagingTableName) throws BODSException {
+        String prevalContent = "";
+        JSONObject valueObject = null;
+        Configurator configurator = null;
+        try {
+            valueObject = new JSONObject();
+            configurator = new Configurator();
+            prevalContent = configurator.getPrevalidationDetail(stagingTableName);
+            valueObject = new JSONObject(prevalContent);
+        } catch (BODSException bodsException) {
+            throw bodsException;
+        } catch (Exception exception) {
+            throw new BODSException("ConfiguratorVO", "getStagintTableDetail", exception.getMessage());
+        }
+        return valueObject;
+    }
+
+    /**
+     * Execute staging procedure.
+     *
+     * @throws BODSException the bODS exception
+     */
+    public void executeStagingProcedure(ConfiguratorVO configuratorVO) throws BODSException {
+        int configuratorId = 0;
+        int configuratorConnId = 0;
+        ConfiguratorExecutor configuratorExecutor = null;
+        try {
+            configuratorExecutor = new ConfiguratorExecutor();
+            configuratorId = configuratorVO.getConfiguratorId();
+            configuratorConnId = configuratorVO.getConfiguratorConnectionId();
+            configuratorExecutor.callStagingProcess(configuratorId, configuratorConnId);
+        } catch (BODSException bodsException) {
+            throw bodsException;
+        } catch (Exception exception) {
+            throw new BODSException("ConfiguratorVO", "getStagintTableDetail", exception.getMessage());
+        }
+    }
 }

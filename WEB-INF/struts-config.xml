@@ -114,7 +114,7 @@
 	</action>
 	
 	<action path="/ConfiguratorExecuteMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
-		<forward name="forward.success" path="configuratorColumnDefinition.main"/>
+		<forward name="forward.success" path="/PrevalidationProcessLaunchMapping.etl"/>
 	</action>
 	
 	<action path="/ConfiguratorList" input="queryDefinition.main" name="configuratorForm" attribute="configuratorForm" validate="false" 
@@ -161,8 +161,16 @@
 	</action>
 	
 	<!-- Interface Column Mapping -->
-	<action path="/PrevalidationProcessLaunch" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+	<action path="/PrevalidationProcessLaunchMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
 		<forward name="forward.success" path="prevalidationProcess.main"/>
+	</action>
+	
+	<action path="/PrevalidationProcessFetchMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+	</action>
+	
+	
+	<action path="/ConfiguratorFinalExecuteMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<!-- <forward name="forward.success" path="/PrevalidationProcessLaunchMapping.echn"/> -->
 	</action>
 		
 </action-mappings>

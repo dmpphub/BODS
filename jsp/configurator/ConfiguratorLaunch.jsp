@@ -6,7 +6,7 @@
 	</head>
 	<script>
 	function callExecute() {
-		document.configuratorForm.action='/bods/ConfiguratorExecuteMapping.etl?configuratorId=7&configuratorConnId=21';
+		document.configuratorForm.action='/bods/ConfiguratorExecuteMapping.etl?configuratorId='+$('#configuratorId').val() +'&configuratorConnId='+$('#configConn').val();
 		document.configuratorForm.submit();
 	}
 </script>

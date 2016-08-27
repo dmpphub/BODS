@@ -36,6 +36,8 @@ public final class ConfiguratorAction extends Action {
         JSONObject convertedJson = null;
         JSONObject valueObject = new JSONObject();
         String forwardName = "forward.success";
+        String stagingTable = "";
+        String pvTableName = "";
         ConfiguratorForm configuratorForm = (ConfiguratorForm) form;
         ConfiguratorHandler configuratorHandler = null;
         ConfiguratorVO configuratorVO = null;
@@ -79,16 +81,17 @@ public final class ConfiguratorAction extends Action {
         } else if (mapping.getPath().equals("/ValidationLaunch")) {
             configuratorHandler = new ConfiguratorHandler();
             configuratorValidationVO = new ConfiguratorValidationVO();
-            
+
             if (request.getParameter("name") != null) {
-            	for (int i = 0; i < configuratorForm.getConfiguratorVO().getConfiguratorValidationVOList().size(); i++) {
-            		configuratorValidationVO = configuratorForm.getConfiguratorVO().getConfiguratorValidationVOList().get(i);
-            		if (configuratorValidationVO.equals(request.getParameter("name"))) {
-            			configuratorForm.getConfiguratorVO().setConfiguratorValidationVO(configuratorValidationVO);
-            		}
-				}
+                for (int i = 0; i < configuratorForm.getConfiguratorVO().getConfiguratorValidationVOList().size(); i++) {
+                    configuratorValidationVO =
+                        configuratorForm.getConfiguratorVO().getConfiguratorValidationVOList().get(i);
+                    if (configuratorValidationVO.equals(request.getParameter("name"))) {
+                        configuratorForm.getConfiguratorVO().setConfiguratorValidationVO(configuratorValidationVO);
+                    }
+                }
             } else {
-            	configuratorValidationVO.setActive("Y");
+                configuratorValidationVO.setActive("Y");
                 configuratorValidationVO.setValidationInference("Error");
                 configuratorForm.getConfiguratorVO().setConfiguratorValidationVO(configuratorValidationVO);
             }
@@ -125,34 +128,52 @@ public final class ConfiguratorAction extends Action {
             int configuratorId = Integer.parseInt(request.getParameter("configuratorId"));
             configuratorHandler = new ConfiguratorHandler();
             configuratorHandler.execute(configuratorId, configuratorConnId);
-        } else if (mapping.getPath().equals("/PrevalidationProcessLaunch")) {
-
+        } else if (mapping.getPath().equals("/PrevalidationProcessLaunchMapping")) {
+            configuratorVO = configuratorForm.getConfiguratorVO();
+            stagingTable = "STG_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorVO.getConfiguratorId();
+            String dataTemplateName = configuratorVO.getConfiguratorName();
+            configuratorHandler = new ConfiguratorHandler();
+            configuratorVO.setPrevalDataString(configuratorHandler.getStagintTableDetail(stagingTable,
+                dataTemplateName));
+        } else if (mapping.getPath().equals("/PrevalidationProcessFetchMapping")) {
+            configuratorVO = configuratorForm.getConfiguratorVO();
+            pvTableName = "PV_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorVO.getConfiguratorId();
+            configuratorHandler = new ConfiguratorHandler();
+            convertedJson = configuratorHandler.getPrevalidationDetail(pvTableName);
+            valueObject.put("convertedJson", convertedJson);
+            printWriter = response.getWriter();
+            printWriter.print(valueObject.get("convertedJson").toString());
+            printWriter.flush();
+            printWriter.close();
+            forwardName = null;
+        } else if (mapping.getPath().equals("/ConfiguratorFinalExecuteMapping")) {
+            configuratorHandler = new ConfiguratorHandler();
         } else if (mapping.getPath().equals("/ConfiguratorList")) {
-        	configuratorHandler = new ConfiguratorHandler();
-        	configuratorVO = configuratorHandler.fetchConfiguratorList(configuratorForm.getConfiguratorVO());
-			configuratorForm.setConfiguratorVO(configuratorVO);
-			forwardName = "forward.success";
+            configuratorHandler = new ConfiguratorHandler();
+            configuratorVO = configuratorHandler.fetchConfiguratorList(configuratorForm.getConfiguratorVO());
+            configuratorForm.setConfiguratorVO(configuratorVO);
+            forwardName = "forward.success";
         } else if (mapping.getPath().equals("/FetchConfiguratorDetails")) {
-        	configuratorHandler = new ConfiguratorHandler();
-			if (request.getParameter("configuratorId") != null ) {
-				configuratorForm.getConfiguratorVO().setConfiguratorId(Integer.parseInt(request.getParameter("configuratorId")));
-			}
-			configuratorVO = configuratorHandler.fetchConfigurationDetails(configuratorForm.getConfiguratorVO());
-			configuratorVO.setConfiguratorId(Integer.parseInt(request.getParameter("configuratorId")));
-			configuratorForm.setConfiguratorVO(configuratorVO);
-			forwardName = "forward.success";
+            configuratorHandler = new ConfiguratorHandler();
+            if (request.getParameter("configuratorId") != null) {
+                configuratorForm.getConfiguratorVO().setConfiguratorId(
+                    Integer.parseInt(request.getParameter("configuratorId")));
+            }
+            configuratorVO = configuratorHandler.fetchConfigurationDetails(configuratorForm.getConfiguratorVO());
+            configuratorVO.setConfiguratorId(Integer.parseInt(request.getParameter("configuratorId")));
+            configuratorForm.setConfiguratorVO(configuratorVO);
+            forwardName = "forward.success";
         } else if (mapping.getPath().equals("/ValidationList")) {
-        	configuratorHandler = new ConfiguratorHandler();
-        	List<ConfiguratorValidationVO> validationVOList = null;
-        	validationVOList = configuratorForm.getConfiguratorVO().getConfiguratorValidationVOList();
-        	if (validationVOList != null && validationVOList.size() > 0) {
-        		forwardName = "forward.success";
-        	} else {
-        		forwardName = "forward.failure";
-        	}
-			//configuratorForm.setConfiguratorVO(configuratorVO);
+            configuratorHandler = new ConfiguratorHandler();
+            List<ConfiguratorValidationVO> validationVOList = null;
+            validationVOList = configuratorForm.getConfiguratorVO().getConfiguratorValidationVOList();
+            if (validationVOList != null && validationVOList.size() > 0) {
+                forwardName = "forward.success";
+            } else {
+                forwardName = "forward.failure";
+            }
         } else if (mapping.getPath().equals("/TargetColumnMappingLaunch")) {
-        	System.out.println(configuratorForm.getConfiguratorVO().getConfiguratorInterfaceColumnVOList());
+            System.out.println(configuratorForm.getConfiguratorVO().getConfiguratorInterfaceColumnVOList());
         }
         return mapping.findForward(forwardName);
     }

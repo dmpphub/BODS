@@ -111,8 +111,15 @@ public class ConfiguratorVO implements Serializable {
 
     /** The configurator validation vo list. */
     private List<ConfiguratorValidationVO> configuratorValidationVOList;
-    
+
+    /** The configurator vo list. */
     private List<ConfiguratorVO> configuratorVOList;
+
+    /** The preval data string. */
+    private String prevalDataString;
+
+    /** The staging table name. */
+    private String stagingTableName;
 
     /**
      * Instantiates a new configurator vo.
@@ -569,11 +576,57 @@ public class ConfiguratorVO implements Serializable {
         this.configuratorInterfaceColumnVO = configuratorInterfaceColumnVO;
     }
 
-	public List<ConfiguratorVO> getConfiguratorVOList() {
-		return configuratorVOList;
-	}
+    /**
+     * Gets the configurator vo list.
+     *
+     * @return the configurator vo list
+     */
+    public List<ConfiguratorVO> getConfiguratorVOList() {
+        return configuratorVOList;
+    }
 
-	public void setConfiguratorVOList(List<ConfiguratorVO> configuratorVOList) {
-		this.configuratorVOList = configuratorVOList;
-	}
+    /**
+     * Sets the configurator vo list.
+     *
+     * @param configuratorVOList the new configurator vo list
+     */
+    public void setConfiguratorVOList(List<ConfiguratorVO> configuratorVOList) {
+        this.configuratorVOList = configuratorVOList;
+    }
+
+    /**
+     * Gets the preval data string.
+     *
+     * @return the preval data string
+     */
+    public String getPrevalDataString() {
+        return prevalDataString;
+    }
+
+    /**
+     * Sets the preval data string.
+     *
+     * @param prevalDataString the new preval data string
+     */
+    public void setPrevalDataString(String prevalDataString) {
+        this.prevalDataString = prevalDataString;
+    }
+
+    /**
+     * Gets the staging table name.
+     *
+     * @return the staging table name
+     */
+    public String getStagingTableName() {
+        return stagingTableName;
+    }
+
+    /**
+     * Sets the staging table name.
+     *
+     * @param stagingTableName the new staging table name
+     */
+    public void setStagingTableName(String stagingTableName) {
+        this.stagingTableName = stagingTableName;
+    }
 }
