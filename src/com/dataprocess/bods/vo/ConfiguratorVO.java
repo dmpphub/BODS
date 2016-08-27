@@ -119,7 +119,7 @@ public class ConfiguratorVO implements Serializable {
     private String prevalDataString;
 
     /** The staging table name. */
-    private String stagingTableName;
+    private List<String> prevalidationSeqNo;
 
     /**
      * Instantiates a new configurator vo.
@@ -612,21 +612,11 @@ public class ConfiguratorVO implements Serializable {
         this.prevalDataString = prevalDataString;
     }
 
-    /**
-     * Gets the staging table name.
-     *
-     * @return the staging table name
-     */
-    public String getStagingTableName() {
-        return stagingTableName;
+    public List<String> getPrevalidationSeqNo() {
+        return prevalidationSeqNo;
     }
 
-    /**
-     * Sets the staging table name.
-     *
-     * @param stagingTableName the new staging table name
-     */
-    public void setStagingTableName(String stagingTableName) {
-        this.stagingTableName = stagingTableName;
+    public void setPrevalidationSeqNo(List<String> prevalidationSeqNo) {
+        this.prevalidationSeqNo = prevalidationSeqNo;
     }
 }

@@ -59,7 +59,8 @@ public final class ConfiguratorExecutor {
                 loadRecordsIntoStagingTable(stagingTableName, configuratorVO, connection, sourceConnection);
             callPrevalidationProcedure(totalStgRecord, configuratorVO, connection, stagingTableName,
                 prevalidationTableName);
-            // configuratorDAO.buildStagingDCFlagStatus(connection, 0, stagingTableName);
+            configuratorDAO.updateStatusCodeBlock(sourceConnection, stagingTableName, configuratorVO);
+            configuratorDAO.buildStagingDCFlagStatus(connection, 0, stagingTableName);
         } catch (BODSException bodsException) {
             throw bodsException;
         } catch (Exception exception) {
