@@ -100,7 +100,7 @@
 								</span>
 							</div>
 							<div class="div-table-col">
-								<nested:text property="dbPassword"/>
+								<nested:password property="dbPassword"/>
 							</div>
 						</div>
 						
@@ -138,13 +138,15 @@
 								</span>
 							</div>
 							<div class="div-table-col">
-								<nested:checkbox property="instanceType" value="Source" > &nbsp; Source</nested:checkbox>  &nbsp;
-								<nested:checkbox property="instanceType" value="destinatin" > &nbsp; Destination</nested:checkbox>
+								<nested:checkbox property="instanceType" value="Source" > Source</nested:checkbox> 
+								<nested:checkbox property="instanceType" value="destination" > Destination</nested:checkbox>
+								<nested:checkbox property="instanceType" value="both" > Both</nested:checkbox>
 							</div>
 						</div>
 						<br/>
 						<center>
 							<button class="btn waves-effect waves-light" type="submit" name="action">Save</button>
+							<button class="btn waves-effect waves-light" type="submit" name="action">Test Connection</button>
 						</center>
 					</div>
 				</div>
