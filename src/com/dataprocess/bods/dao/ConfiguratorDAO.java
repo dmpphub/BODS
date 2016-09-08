@@ -588,6 +588,47 @@ public final class ConfiguratorDAO {
     }
 
     /**
+     * Update status code block.
+     *
+     * @param connection the connection
+     * @param stagingTableName the staging table name
+     * @throws BODSException the bODS exception
+     */
+    public boolean updateStatusCodeBlock(Connection connection, String stagingTableName, ConfiguratorVO configuratorVO)
+        throws BODSException {
+        int index = 0;
+        int updateCount = 0;
+        boolean updateFlag = false;
+        StringBuffer dcStatus = null;
+        PreparedStatement preparedStatement = null;
+        List<String> prevalidationSeqNo = null;
+        try {
+            prevalidationSeqNo = configuratorVO.getPrevalidationSeqNo();
+            dcStatus = new StringBuffer();
+            dcStatus.append(" UPDATE " + stagingTableName + " SET STATUS_CODE = ");
+            dcStatus.append("  CASE WHEN ( ");
+            for (String prevalSeq : prevalidationSeqNo) {
+                if (index == 0) {
+                    dcStatus.append(" (" + prevalSeq + " != 'S' ) ");
+                    index++;
+                } else {
+                    dcStatus.append(" OR (" + prevalSeq + " != 'S' ) ");
+                }
+            }
+            dcStatus.append(" ) THEN 'E' ELSE 'S' END; ");
+            preparedStatement = connection.prepareStatement(dcStatus.toString());
+            updateCount = preparedStatement.executeUpdate();
+            if (updateCount > 0) {
+                updateFlag = true;
+            }
+        } catch (Exception exception) {
+            throw new BODSException("ConfiguratorDAO", "getExtractQueryFromDB", exception.getMessage());
+        }
+        return updateFlag;
+
+    }
+
+    /**
      * Builds the staging dc flag status.
      *
      * @param connection the connection

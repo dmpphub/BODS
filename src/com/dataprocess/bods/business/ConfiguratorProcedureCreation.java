@@ -1,5 +1,6 @@
 package com.dataprocess.bods.business;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dataprocess.bods.util.BODSException;
@@ -65,12 +66,17 @@ public final class ConfiguratorProcedureCreation {
      */
     private void buildValidationMergeBlock(StringBuffer procedureContent, ConfiguratorVO configuratorVO)
         throws BODSException {
+        int count = 0;
+        List<String> prevalidationSeqNo = null;
         List<ConfiguratorValidationVO> preValidationVOList = null;
         try {
+            prevalidationSeqNo = new ArrayList<String>();
             preValidationVOList = configuratorVO.getConfiguratorValidationVOList();
             if (preValidationVOList != null && preValidationVOList.size() > 0) {
                 for (ConfiguratorValidationVO configuratorValidationVO : preValidationVOList) {
+                    ++count;
                     procedureContent = new StringBuffer();
+                    prevalidationSeqNo.add("PV_" + count);
                     procedureContent.append(" DECLARE \n");
                     procedureContent.append(" L_MERGE_ERR_MSG VARCHAR2(4000); \n");
                     procedureContent.append(" L_ERROR_COUNT   NUMBER; \n");
@@ -135,6 +141,7 @@ public final class ConfiguratorProcedureCreation {
                     configuratorValidationVO.setValidationProcedureValue(procedureContent.toString());
                 }
             }
+            configuratorVO.setPrevalidationSeqNo(prevalidationSeqNo);
         } catch (Exception exception) {
             throw new BODSException("ConfiguratorProcedureCreation", "buildValidationMergeBlock",
                 exception.getMessage());

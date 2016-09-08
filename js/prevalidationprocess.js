@@ -34,7 +34,6 @@ $(document).ready(function () {
 		     dataType: "text",
 		     url: "/bods/PrevalidationProcessFetchMapping.etl",
 		     success: function(data) {
-		    	 alert('data' +  data);
 		    	 if(data != null && data != '') {
 		    		 alert($.parseJSON(data));
 		    		 var conditionVO = $.parseJSON(data);
