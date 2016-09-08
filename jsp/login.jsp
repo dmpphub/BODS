@@ -24,8 +24,13 @@
 </script>
 <html>
 	<html:form action="/LoginAction.etl">
+	<br/>
+	<h2 style="text-align:center;font-weight: bold;color:#595959;">BUSINESS OBJECT DATA SERVICES</h3>
+	
+	<h3 style="text-align:center;color:#595959;">LOGIN</h3>
+	
 		<nested:root name="loginForm">
-			<nested:nest property="loginVO">
+			<nested:nest property="loginVO">		
 				<div id="loginContainer">
 					<div class="row">
 	        			<div class="input-field col s4"> 

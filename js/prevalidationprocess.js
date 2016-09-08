@@ -1,32 +1,60 @@
 var prevalidationViewList;
 
 $(document).ready(function () {
-		$('.success').pieChart({
-            barColor: '#00cc00',
-            trackColor: '#eee',
-            lineCap: 'round',
-            lineWidth: 10,
-            onStep: function (from, to, percent) {
-                $(this.element).find('.pie-value').text(Math.round(percent) + '%');
-            }
-        });
-		
-		 $('.error').pieChart({
-	            barColor: '#e62e00',
-	            trackColor: '#eee',
-	            lineCap: 'round',
-	            lineWidth: 10,
-	            onStep: function (from, to, percent) {
-	                $(this.element).find('.pie-value').text(Math.round(percent) + '%');
-	            }
-	        });
-		 
-		    $('#inner-content-div').slimScroll({
-		        height: '410px'
-		    });
-		    
-		    callPrevalidation();
+	$('#inner-content-div').slimScroll({
+	    height: '410px'
+	});
+	callPrevalidation();
+});
+
+function easyPieChart() {
+	
+	$('.success').pieChart({
+        barColor: '#00cc00',
+        trackColor: '#eee',
+        lineCap: 'round',
+        lineWidth: 10,
+        onStep: function (from, to, percent) {
+            $(this.element).find('.pie-value').text(Math.round(percent) + '%');
+        }
     });
+	
+	 $('.error').pieChart({
+	        barColor: '#e62e00',
+	        trackColor: '#eee',
+	        lineCap: 'round',
+	        lineWidth: 10,
+	        onStep: function (from, to, percent) {
+	            $(this.element).find('.pie-value').text(Math.round(percent) + '%');
+	        }
+	  });
+	 
+	var chart = window.chart = $('.chart').data('easyPieChart');
+	$('.js_update').on('click', function() {
+		chart.update(Math.random()*200-100);
+	});
+}
+
+function renderSuccessChart(successPrecentage) {
+	/*var percent = $('#totalSuccessChartSpan').text();*/
+	//var percent = Trim(successPrecentage);
+	if ($.isNumeric(successPrecentage)) {
+		$('#totalSuccessChart').data('easyPieChart').update(successPrecentage);
+	} else {
+		$('#totalSuccessChart').data('easyPieChart').update(0);
+	}
+}
+
+function renderErrorChart(errorPrecentage) {
+	/*var percent = $('#totalErrorChartSpan').text();*/
+	//var percent = Trim(errorPrecentage);
+	if ($.isNumeric(errorPrecentage)) {
+		$('#totalErrorChart').data('easyPieChart').update(errorPrecentage);
+	} else {
+		$('#totalErrorChart').data('easyPieChart').update(0);
+	}
+}
+
 
 	function callPrevalidation() {
 		$.ajax({
@@ -59,15 +87,22 @@ $(document).ready(function () {
 		var attributeName = '';
 		var prevalFrameDivObject = $('#inner-content-div');
 		$(prevalFrameDivObject).empty();
-		for (var i = 0; i < prevalidationViewList.length; i++) {
-			attributeName = prevalidationViewList[i][i].attributeName;
-			errorCount = prevalidationViewList[i][i].errorCount;
-			successCount = prevalidationViewList[i][i].successCount;
-			successPrecentage = prevalidationViewList[i][i].successPrecentage;
-			errorPrecentage = prevalidationViewList[i][i].errorPrecentage;
-			successMsg = prevalidationViewList[i][i].successMsg;
-			errorMsg = prevalidationViewList[i][i].errorMsg;
-			formValidtaionStr = '<div class="div-table-row-progress">';
+		for (var i = 0; i < prevalidationViewList[0].length; i++) {
+			attributeName = prevalidationViewList[0][i].pv_attribute;
+			errorCount = prevalidationViewList[0][i].errorCount;
+			successCount = prevalidationViewList[0][i].successCount;
+			successPrecentage = prevalidationViewList[0][i].successPrecentage;
+			errorPrecentage = prevalidationViewList[0][i].errorPrecentage;
+			successMsg = prevalidationViewList[0][i].successMsg;
+			errorMsg = prevalidationViewList[0][i].errorMsg;
+			formValidtaionStr = '';
+			/*if(i > 0) {*/
+				formValidtaionStr = '<br\>';
+				formValidtaionStr += '<br\>';
+				formValidtaionStr += '<div class="div-table-row-progress">';
+			/*} else {
+				formValidtaionStr = '<div class="div-table-row-progress">';
+			}*/
 			formValidtaionStr += '	<div class="div-table-col" style="width=50px;">';
 			formValidtaionStr += '  	<table>';
 			formValidtaionStr += '  		<tr>';
@@ -93,6 +128,12 @@ $(document).ready(function () {
 			formValidtaionStr += '		<div  class="pie-title-center error" data-percent="'+errorPrecentage+'" style="margin-top: 2px;">';
 			formValidtaionStr += '		<span style="margin-left: -100px;margin-top: -23px;" class="pie-value"></span></div>';
 			formValidtaionStr += '</div>';
+			formValidtaionStr += '<br\>';
+			formValidtaionStr += '<br\>';
+			formValidtaionStr += '<br\>';
 			prevalFrameDivObject.append(formValidtaionStr);
+			easyPieChart();
+			//renderSuccessChart(successPrecentage);
+			//renderErrorChart(errorPrecentage);
 		}
 	}

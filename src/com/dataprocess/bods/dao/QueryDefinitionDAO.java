@@ -45,7 +45,7 @@ public final class QueryDefinitionDAO {
             jdbcConnectionManager = new JDBCConnectionManager();
             if (jdbcConnectionManager.getJDBCConnection()) {
                 connection = jdbcConnectionManager.getConnection();
-                query = queryDefinitionVO.getSqlQuery().replaceAll(";", "") + " WHERE 1 = 2 ";
+                query = queryDefinitionVO.getSqlQuery().replaceAll(";", "") + " AND 1 = 2 ";
                 ps = connection.prepareStatement(query);
                 rs = ps.executeQuery();
                 metaData = rs.getMetaData();

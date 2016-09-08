@@ -355,9 +355,7 @@ public final class ConfiguratorDAO {
             dropTableIfExists(stagingTableName, connection, targetSchemaConnection);
             preparedStatement = connection.prepareStatement(tableScripts);
             resultSet = preparedStatement.executeQuery();
-        } catch (BODSException bodsException) {
-            throw bodsException;
-        } catch (Exception exception) {
+        }  catch (Exception exception) {
             throw new BODSException("ConfiguratorDAO", "createStagingTable", exception.getMessage());
         } finally {
             targetSchemaConnection.targetSchemaClose(null, preparedStatement, resultSet, null);
@@ -382,9 +380,7 @@ public final class ConfiguratorDAO {
             dropTableIfExists(pvTableName, connection, targetSchemaConnection);
             preparedStatement = connection.prepareStatement(tableScripts);
             resultSet = preparedStatement.executeQuery();
-        } catch (BODSException bodsException) {
-            throw bodsException;
-        } catch (Exception exception) {
+        }  catch (Exception exception) {
             throw new BODSException("ConfiguratorDAO", "createPrevalidationTable", exception.getMessage());
         } finally {
             targetSchemaConnection.targetSchemaClose(null, preparedStatement, resultSet, null);
@@ -426,7 +422,7 @@ public final class ConfiguratorDAO {
                 preparedStatement.setInt(++index, 0);
                 preparedStatement.setInt(++index, configuratorVO.getConfiguratorId());
                 preparedStatement.setString(++index, "PV_" + count);
-                pvColumn = ", PV_" + count;
+                pvColumn += ", PV_" + count +" VARCHAR2(50) ";
                 preparedStatement.setString(++index, "M");
                 preparedStatement.setString(++index, configuratorValidationVO.getName());
                 preparedStatement.setString(++index, configuratorValidationVO.getDisplayName());
@@ -463,7 +459,7 @@ public final class ConfiguratorDAO {
      * @throws BODSException the bODS exception
      */
     private void dropTableIfExists(String stagingTableName, Connection connection,
-        TargetSchemaConnection targetSchemaConnection) throws BODSException {
+        TargetSchemaConnection targetSchemaConnection)  {
         String query = "";
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -474,7 +470,18 @@ public final class ConfiguratorDAO {
         } catch (Exception exception) {
             exception.printStackTrace();
         } finally {
-            targetSchemaConnection.targetSchemaClose(null, preparedStatement, resultSet, null);
+        	try {
+        		if(preparedStatement != null) {
+            		preparedStatement.close();
+            	}
+        		if(resultSet != null) {
+        			resultSet.close();
+        		}
+        	} catch(Exception exception2) {
+        		exception2.printStackTrace();
+        	}
+        	
+            
         }
     }
 
@@ -615,12 +622,9 @@ public final class ConfiguratorDAO {
                     dcStatus.append(" OR (" + prevalSeq + " != 'S' ) ");
                 }
             }
-            dcStatus.append(" ) THEN 'E' ELSE 'S' END; ");
+            dcStatus.append(" ) THEN 'E' ELSE 'S' END ");
             preparedStatement = connection.prepareStatement(dcStatus.toString());
-            updateCount = preparedStatement.executeUpdate();
-            if (updateCount > 0) {
-                updateFlag = true;
-            }
+            preparedStatement.executeUpdate();
         } catch (Exception exception) {
             throw new BODSException("ConfiguratorDAO", "getExtractQueryFromDB", exception.getMessage());
         }

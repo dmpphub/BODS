@@ -34,7 +34,8 @@ public class InstanceDetailsDAO {
 				queryBuffer.append("      DB_PASSWORD,");
 				queryBuffer.append("      DB_PORT,");
 				queryBuffer.append("      DB_SERVICE_ID,");
-				queryBuffer.append("      CONNECTION_MODE_TYPE");
+				queryBuffer.append("      CONNECTION_MODE_TYPE,");
+				queryBuffer.append("      HOST_NAME");
 				queryBuffer.append("    )");
 				queryBuffer.append("    VALUES");
 				queryBuffer.append("    (");
@@ -56,6 +57,8 @@ public class InstanceDetailsDAO {
 						instanceDetailsVO.getServiceName());
 				ps.setString(++parameterIndex,
 						instanceDetailsVO.getInstanceType());
+				ps.setString(++parameterIndex,
+						instanceDetailsVO.getHostName() );
 				if (ps.executeUpdate() > 0) {
 					hasCompleted = true;
 				}

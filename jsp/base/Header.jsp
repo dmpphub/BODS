@@ -132,7 +132,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							</ul></li> -->
 						<li class="dropdown"><a href="#"
 							class="dropdown-toggle dropdown-at" data-toggle="dropdown"><span
-								class=" name-caret"><%=session.getAttribute(BODSConstants.LOGGED_USER_NAME) %><i class="caret"></i></span><img
+								class=" name-caret">Administrator<%=session.getAttribute(BODSConstants.LOGGED_USER_NAME) %><i class="caret"></i></span><img
 								src="images/manoj.jpg" height="60" width="60"></a>
 							<ul class="dropdown-menu " role="menu">
 								<li><a href="/bods/Logout.etl"><i class="fa fa-user"></i>Logout</a></li>
