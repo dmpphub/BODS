@@ -1,4 +1,11 @@
 <%@ taglib uri="struts-html" prefix="html"%><%@ taglib uri="struts-bean" prefix="bean"%><%@ taglib uri="struts-nested" prefix="nested"%>
+<link href="css/cs-ui.css" rel="stylesheet" type="text/css">
+<script src="js/jquery-1.11.2.min.js" type="text/javascript"></script>
+<script src="js/jquery-ui.js" type="text/javascript"></script>
+<script src="js/date-time-picker/jquery-ui-timepicker-addon.js" type="text/javascript"></script>
+<script src="js/perfect-scrollbar.js" type="text/javascript"></script>
+<script src="js/plugins/notifications.js" type="text/javascript"></script>
+<script src="js/custom.js" type="text/javascript"></script>
 <script>
 	function doNextProcess() {
 		location.href = '/bods/QueryDefinitionDataList.etl';
@@ -93,6 +100,7 @@
 			<center>
 				<button class="btn waves-effect waves-light" type="submit" name="action">Save</button>
 				<a class="btn disabled" onclick="doNextProcess()">Show Records</a>&nbsp;&nbsp;&nbsp;
+				<button id="closeabletrans2" >closeable transaction message2 </button>
 			</center>
 		</nested:nest>
 	</html:form>
@@ -105,4 +113,12 @@
 	if (document.getElementById('sourceConfiguratorId').value > 0) {
 		$('.btn.waves-effect.waves-light').addClass('disabled');
 	}
+	$('#closeabletrans2').click(function () {
+	    $.meow({
+			title:'Success: Uploaded members status',
+	      icon: '../../images/trans-success-icon.png',
+			type:'success-light',
+			transaction:'trans-message',
+	    });
+	  });
 </script>

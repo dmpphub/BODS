@@ -118,6 +118,7 @@ input[type="text"], input[type="Password"], select {
 					</center>
 				</div>
 			</div>
+			<!-- <div class="alert alert-danger" role="alert"><strong>Transaction Failure!</strong> Better check yourself, you're not looking too good.</div> -->
 		</nested:nest>
 	</nested:root>
 </html:form>

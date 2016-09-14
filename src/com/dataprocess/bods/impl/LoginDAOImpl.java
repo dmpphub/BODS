@@ -5,7 +5,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.dataprocess.bods.dao.LoginDAO;
-import com.dataprocess.bods.entity.LoginDetailEO;
 import com.dataprocess.bods.util.connectionutil.HibernateSessionManager;
 import com.dataprocess.bods.vo.LoginVO;
 
@@ -22,9 +21,9 @@ public class LoginDAOImpl implements LoginDAO {
 			transaction = session.beginTransaction();
 			queryBuffer = new StringBuffer();
 			queryBuffer.append(" SELECT ");
-			queryBuffer.append(" ETL_LOGIN_ID ");
+			queryBuffer.append(" * ");
 			queryBuffer.append(" FROM ");
-			queryBuffer.append(" ETL_LOGIN_USERS ");
+			queryBuffer.append(" BODS_USERS ");
 			queryBuffer.append(" WHERE ");
 			queryBuffer.append(" USERNAME = ? ");
 			queryBuffer.append(" AND PASSWORD = ? ");

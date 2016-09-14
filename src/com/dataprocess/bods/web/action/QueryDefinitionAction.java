@@ -9,6 +9,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import com.dataprocess.bods.handler.QueryDefinitionHandler;
+import com.dataprocess.bods.util.TransactionMessage;
 import com.dataprocess.bods.vo.QueryDefinitionVO;
 import com.dataprocess.bods.web.form.QueryDefinitionForm;
 
@@ -45,8 +46,10 @@ public class QueryDefinitionAction extends Action {
             if (hasCompleted) {
                 queryDefinitionForm.getQueryDefinitionVO().setQueryValidatedFlag("Y");
                 queryDefinitionForm.setQueryDefinitionVO(queryDefinitionForm.getQueryDefinitionVO());
+                request.setAttribute("transactionSuccessMessage", new TransactionMessage("Transaction Successful!!!!", ""));
             } else {
                 queryDefinitionForm.getQueryDefinitionVO().setQueryValidatedFlag("N");
+                request.setAttribute("transactionSuccessMessage", new TransactionMessage("Transaction Failure!!!!", ""));
                 forwardName = "forward.failure";
             }
         } else if (mapping.getPath().equals("/QueryDefinitionColumnList")) {
