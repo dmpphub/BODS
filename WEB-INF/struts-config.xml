@@ -179,6 +179,10 @@
 	<action path="/CheckingConfiguratorRunningStautsMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
 	</action>
 	
+	<action path="/DisplayRecordFileMapping" name="configuratorForm" attribute="configuratorForm" validate="true" type="com.dataprocess.bods.web.action.ConfiguratorAction">
+		<forward name="forward.success.processsummary" path="configuratorProcessSummary.main"/>
+	</action>
+	
 	
 		
 </action-mappings>

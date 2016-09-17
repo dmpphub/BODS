@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import com.dataprocess.bods.business.Configurator;
 import com.dataprocess.bods.business.ConfiguratorExecutor;
+import com.dataprocess.bods.dao.CommonProcessDAO;
 import com.dataprocess.bods.dao.ConfiguratorDAO;
 import com.dataprocess.bods.dao.ConfiguratorValidationDAO;
 import com.dataprocess.bods.entity.ConfiguratorExecutionEO;
@@ -376,12 +377,17 @@ public final class ConfiguratorHandler {
      * @return the completed record count details
      * @throws BODSException the bODS exception
      */
-    public String getCompletedRecordCountDetails(String stagingTableName) throws BODSException {
+    public String getCompletedRecordCountDetails(String stagingTableName, ConfiguratorVO configuratorVO)
+        throws BODSException {
         String recordCount = "";
         ConfiguratorDAO configuratorDAO = null;
+        CommonProcessDAO commonProcessDAO = null;
         try {
             configuratorDAO = new ConfiguratorDAO();
+            commonProcessDAO = new CommonProcessDAO();
             recordCount = configuratorDAO.getStagingTableDetailForPieChart(stagingTableName);
+            commonProcessDAO.getSuccessFile(stagingTableName, configuratorVO);
+            commonProcessDAO.getErrorFile(stagingTableName, configuratorVO);
         } catch (BODSException bodsException) {
             throw bodsException;
         } catch (Exception exception) {

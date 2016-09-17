@@ -8,6 +8,8 @@
 	<script>
 	var isTimerStarted = false;
 	var myInterval = 0;
+	
+	var callIntervalExist = false;
 	function callValidationProcess() {
 		document.configuratorForm.action='/bods/PrevalidationProcessLaunchMapping.etl';
 		document.configuratorForm.submit();
@@ -52,7 +54,6 @@
 		     dataType: "text",
 		     url: "/bods/CompletedRecordDisplayMapping.etl",
 		     success: function(data) {
-		    	 alert(data);
 		    	 displayCount(data);
 		     }, error: function(xhr, status, error) {
 		            console.log(xhr);
@@ -100,6 +101,7 @@
 			$('#statusFlow ul li:nth-child(4)').addClass("previous visited");
 			$('#statusFlow ul li:nth-child(5)').addClass("active");
 			$('#afterExecutionDisplayId').show();
+			callIntervalExist = true;
 			stopTimer();
 			completedRecordDisplay();
 		}
@@ -116,11 +118,17 @@
 		$('#displayRecordDiv td:nth-child(4)').text(errorRecord);
 		$('#displayRecordDiv td:nth-child(5)').text(successRecord);
 	}
+	
+	function openFile(statusMsg) {
+		document.configuratorForm.action='/bods/DisplayRecordFileMapping.etl?type='+statusMsg;
+		document.configuratorForm.submit();
+	}
 </script>
 <nested:root name="configuratorForm">
 	<html:form styleId="ldrForm" action="PrevalidationProcessLaunchMapping">
 		<nested:nest property="configuratorVO">
-		<nested:hidden property="loaderExecutionId" styleId="loaderExecutionId"/>
+			<nested:hidden property="loaderExecutionId" styleId="loaderExecutionId"/>
+			<nested:hidden property="configuratorName" styleId="configuratorName"/>
 		<div id="pageContentDivId">
 			<div class="div-table">
 				<div class="checkout-wrap" id="statusFlow">
@@ -152,8 +160,8 @@
 							<td style="padding-left: 70px;"></td>
 							<td style="padding-left: 85px;"></td>
 							<td style="padding-left: 85px;">
-								<img src="images/excel_generate_green.gif" />
-								<img src="images/excel_generate_red.gif" />
+								<img src="images/excel_generate_green.gif" onclick="openFile('Success')"/>
+								<img src="images/excel_generate_red.gif" onclick="openFile('Error')"/>
 							</td>
 						</tr>
 			      </table>
@@ -163,7 +171,9 @@
 	</html:form>
 </nested:root>
 <script>
-	startTimer();
+	if(!callIntervalExist) {
+		startTimer();
+	}
 </script>
 </html:html>
 

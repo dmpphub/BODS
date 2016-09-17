@@ -1,12 +1,16 @@
 package com.dataprocess.bods.web.action;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -195,12 +199,32 @@ public final class ConfiguratorAction extends Action {
             configuratorVO = configuratorForm.getConfiguratorVO();
             String stagingTableName =
                 "STG_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorVO.getConfiguratorId();
-            currentStatus = configuratorHandler.getCompletedRecordCountDetails(stagingTableName);
+            currentStatus = configuratorHandler.getCompletedRecordCountDetails(stagingTableName, configuratorVO);
             printWriter = response.getWriter();
             printWriter.print(currentStatus);
             printWriter.flush();
             printWriter.close();
             forwardName = null;
+        } else if (mapping.getPath().equals("/DisplayRecordFileMapping")) {
+            String type = request.getParameter("type");
+            String reportPath = "";
+            configuratorVO = configuratorForm.getConfiguratorVO();
+            if ("Success".equals(type)) {
+                reportPath = "D:\\fileOutput\\" + configuratorVO.getConfiguratorName() + "_SUCCESS.xlsx";
+            } else {
+                reportPath = "D:\\fileOutput\\" + configuratorVO.getConfiguratorName() + "_ERROR.xlsx";
+            }
+            File file = new File(reportPath);
+            FileInputStream xlsStream = new FileInputStream(file);
+            response.setContentType("application/vnd.openxml");
+            response.setHeader("Content-Length", String.valueOf(file.length()));
+            response.setHeader("Content-Disposition", "attachment;filename=\"" + file + "\"");
+            response.setContentLength((int) file.length());
+            ServletOutputStream outputStream = response.getOutputStream();
+            IOUtils.copy(xlsStream, outputStream);
+            outputStream.flush();
+            outputStream.close();
+            xlsStream.close();
         }
         return mapping.findForward(forwardName);
     }

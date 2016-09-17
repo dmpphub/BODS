@@ -202,11 +202,11 @@ public final class CommonProcessDAO {
                 if (index == 0) {
                     columnHeader = configuratorColumnDefinitionVO.getColumnName();
                 } else {
-                    columnHeader = ", " + configuratorColumnDefinitionVO.getColumnName();
+                    columnHeader+= ", " + configuratorColumnDefinitionVO.getColumnName();
                 }
-                obj[index] = columnHeader;
-                columnHeaderList.add(columnHeader);
-                columnNameWithDataType.put(columnHeader, configuratorColumnDefinitionVO.getDataType());
+                obj[index] = configuratorColumnDefinitionVO.getColumnName();
+                columnHeaderList.add(configuratorColumnDefinitionVO.getColumnName());
+                columnNameWithDataType.put(configuratorColumnDefinitionVO.getColumnName(), configuratorColumnDefinitionVO.getDataType());
                 index++;
             }
             successHeader.put("1", obj);
@@ -229,6 +229,7 @@ public final class CommonProcessDAO {
         int rownum = 0;
         XSSFWorkbook workbook = null;
         XSSFSheet sheet = null;
+        String workingdirectory = "D:\\fileOutput";
         try {
             // Blank workbook
             workbook = new XSSFWorkbook();
@@ -251,8 +252,13 @@ public final class CommonProcessDAO {
                 }
             }
 
+            if(!new File(workingdirectory).exists()) {
+                new File(workingdirectory).mkdir();
+            }
             // Write the workbook in file system
-            FileOutputStream out = new FileOutputStream(new File(configuratorName + "_" + fileDisplayMsg + ".xlsx"));
+            FileOutputStream out =
+                new FileOutputStream(new File(workingdirectory + "\\" + configuratorName + "_" + fileDisplayMsg
+                    + ".xlsx"));
             workbook.write(out);
             out.close();
 
