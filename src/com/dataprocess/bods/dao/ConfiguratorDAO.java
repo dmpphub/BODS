@@ -42,7 +42,6 @@ public final class ConfiguratorDAO {
         Session session = null;
         Criteria criteria = null;
         QueryDefinitionEO queryDefinitionEO = null;
-
         try {
             session = HibernateSessionManager.getHibernateSession();
             criteria = session.createCriteria(QueryDefinitionEO.class);
@@ -503,7 +502,8 @@ public final class ConfiguratorDAO {
             preparedStatement = connection.prepareStatement(deleteTableScript);
             resultSet = preparedStatement.executeQuery();
         } catch (Exception exception) {
-            throw new BODSException("ConfiguratorDAO", "deleteStagingTableRecords", exception.getMessage());
+            exception.printStackTrace();
+            //throw new BODSException("ConfiguratorDAO", "deleteStagingTableRecords", exception.getMessage());
         } finally {
             targetSchemaConnection.targetSchemaClose(null, preparedStatement, resultSet, null);
         }
@@ -604,7 +604,6 @@ public final class ConfiguratorDAO {
     public boolean updateStatusCodeBlock(Connection connection, String stagingTableName, ConfiguratorVO configuratorVO)
         throws BODSException {
         int index = 0;
-        int updateCount = 0;
         boolean updateFlag = false;
         StringBuffer dcStatus = null;
         PreparedStatement preparedStatement = null;

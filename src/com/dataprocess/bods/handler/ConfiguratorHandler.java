@@ -5,15 +5,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Session;
 import org.json.JSONObject;
 
 import com.dataprocess.bods.business.Configurator;
 import com.dataprocess.bods.business.ConfiguratorExecutor;
+import com.dataprocess.bods.dao.ConfiguratorDAO;
+import com.dataprocess.bods.dao.ConfiguratorValidationDAO;
+import com.dataprocess.bods.entity.ConfiguratorExecutionEO;
 import com.dataprocess.bods.util.BODSException;
+import com.dataprocess.bods.util.connectionutil.HibernateSessionManager;
 import com.dataprocess.bods.vo.ConfiguratorColumnDefinitionVO;
 import com.dataprocess.bods.vo.ConfiguratorInterfaceColumnVO;
 import com.dataprocess.bods.vo.ConfiguratorVO;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ConfiguratorHandler.
  */
@@ -177,18 +183,38 @@ public final class ConfiguratorHandler {
      *
      * @param configuratorId the configurator id
      * @param configuratorConnId the configurator conn id
+     * @return the configurator vo
      * @throws BODSException the bODS exception
      */
-    public void execute(int configuratorId, int configuratorConnId) throws BODSException {
+    public ConfiguratorVO execute(int configuratorId, int configuratorConnId) throws BODSException {
+        Session session = null;
+        ConfiguratorVO configuratorVO = null;
+        ConfiguratorExecutionEO configuratorExecutionEO = null;
         ConfiguratorExecutor configuratorExecutor = null;
+        ConfiguratorValidationDAO configuratorValidationDAO = null;
         try {
+            session = HibernateSessionManager.getHibernateSession();
+            configuratorExecutionEO = new ConfiguratorExecutionEO();
+            configuratorValidationDAO = new ConfiguratorValidationDAO();
             configuratorExecutor = new ConfiguratorExecutor();
-            configuratorExecutor.loaderStagingTableInsert(configuratorId, configuratorConnId);
+            configuratorExecutionEO.setConfiguratorId(configuratorId);
+            configuratorExecutionEO.setCurrentStatus("EXTRACT_START");
+            configuratorExecutionEO.setConfiguratorExecId(configuratorValidationDAO.mergeStatusForConfigurator(session,
+                configuratorExecutionEO));
+            configuratorVO =
+                configuratorExecutor.loaderStagingTableInsert(configuratorId, configuratorConnId, session,
+                    configuratorExecutionEO);
         } catch (BODSException bodsException) {
             throw bodsException;
         } catch (Exception exception) {
             throw new BODSException("ConfiguratorHandler", "execute", exception.getMessage());
+        } finally {
+            if (session != null) {
+                session.clear();
+                session.close();
+            }
         }
+        return configuratorVO;
 
     }
 
@@ -281,21 +307,86 @@ public final class ConfiguratorHandler {
     /**
      * Execute staging procedure.
      *
+     * @param configuratorVO the configurator vo
      * @throws BODSException the bODS exception
      */
     public void executeStagingProcedure(ConfiguratorVO configuratorVO) throws BODSException {
         int configuratorId = 0;
         int configuratorConnId = 0;
+        Session session = null;
+        ConfiguratorValidationDAO configuratorValidationDAO = null;
+        ConfiguratorExecutionEO configuratorExecutionEO = null;
         ConfiguratorExecutor configuratorExecutor = null;
         try {
+            session = HibernateSessionManager.getHibernateSession();
+            configuratorExecutionEO = new ConfiguratorExecutionEO();
+            configuratorValidationDAO = new ConfiguratorValidationDAO();
+            configuratorExecutor = new ConfiguratorExecutor();
+            configuratorExecutionEO.setConfiguratorExecId(configuratorVO.getLoaderExecutionId());
+            configuratorExecutionEO.setConfiguratorId(configuratorVO.getConfiguratorId());
+            configuratorExecutionEO.setCurrentStatus("LOADING_START");
+            configuratorValidationDAO.mergeStatusForConfigurator(session, configuratorExecutionEO);
             configuratorExecutor = new ConfiguratorExecutor();
             configuratorId = configuratorVO.getConfiguratorId();
             configuratorConnId = configuratorVO.getConfiguratorConnectionId();
             configuratorExecutor.callStagingProcess(configuratorId, configuratorConnId);
+            configuratorExecutionEO.setCurrentStatus("LOADING_END");
+            configuratorValidationDAO.mergeStatusForConfigurator(session, configuratorExecutionEO);
+            configuratorExecutionEO.setCurrentStatus("COMPLETED");
+            configuratorValidationDAO.mergeStatusForConfigurator(session, configuratorExecutionEO);
         } catch (BODSException bodsException) {
             throw bodsException;
         } catch (Exception exception) {
             throw new BODSException("ConfiguratorVO", "getStagintTableDetail", exception.getMessage());
+        } finally {
+            if (session != null) {
+                session.clear();
+                session.close();
+            }
         }
+    }
+
+    /**
+     * Gets the configurator current status.
+     *
+     * @param configuratorExecId the configurator exec id
+     * @return the configurator current status
+     * @throws BODSException the bODS exception
+     */
+    public String getConfiguratorCurrentStatus(int configuratorExecId) throws BODSException {
+        String currentStatus = "";
+        ConfiguratorExecutionEO configuratorExecutionEO = null;
+        ConfiguratorValidationDAO configuratorValidationDAO = null;
+        try {
+            configuratorValidationDAO = new ConfiguratorValidationDAO();
+            configuratorExecutionEO = configuratorValidationDAO.getConfiguratorCurrentStatus(configuratorExecId);
+            currentStatus = configuratorExecutionEO.getCurrentStatus();
+        } catch (BODSException bodsException) {
+            throw bodsException;
+        } catch (Exception exception) {
+            throw new BODSException("ConfiguratorVO", "getConfiguratorCurrentStatus", exception.getMessage());
+        }
+        return currentStatus;
+    }
+
+    /**
+     * Gets the completed record count details.
+     *
+     * @param stagingTableName the staging table name
+     * @return the completed record count details
+     * @throws BODSException the bODS exception
+     */
+    public String getCompletedRecordCountDetails(String stagingTableName) throws BODSException {
+        String recordCount = "";
+        ConfiguratorDAO configuratorDAO = null;
+        try {
+            configuratorDAO = new ConfiguratorDAO();
+            recordCount = configuratorDAO.getStagingTableDetailForPieChart(stagingTableName);
+        } catch (BODSException bodsException) {
+            throw bodsException;
+        } catch (Exception exception) {
+            throw new BODSException("ConfiguratorVO", "getConfiguratorCurrentStatus", exception.getMessage());
+        }
+        return recordCount;
     }
 }

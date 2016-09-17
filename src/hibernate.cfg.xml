@@ -17,5 +17,6 @@
    		<mapping class="com.dataprocess.bods.entity.ConnectionConfigurationEO"/>
    		<mapping class="com.dataprocess.bods.entity.ConfiguratorEO"/>
    		<mapping class="com.dataprocess.bods.entity.ConfiguratorBinariesEO"/>
+   		<mapping class="com.dataprocess.bods.entity.ConfiguratorExecutionEO"/>
     </session-factory>  
 </hibernate-configuration>  

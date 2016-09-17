@@ -7,8 +7,12 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
+import org.hibernate.Session;
+
 import com.dataprocess.bods.dao.ConfiguratorDAO;
+import com.dataprocess.bods.dao.ConfiguratorValidationDAO;
 import com.dataprocess.bods.entity.ConfiguratorEO;
+import com.dataprocess.bods.entity.ConfiguratorExecutionEO;
 import com.dataprocess.bods.util.BODSException;
 import com.dataprocess.bods.util.BytesUtil;
 import com.dataprocess.bods.util.connectionutil.TargetSchemaConnection;
@@ -28,13 +32,15 @@ public final class ConfiguratorExecutor {
      * @param configuratorConnId the configurator conn id
      * @throws BODSException the bODS exception
      */
-    public void loaderStagingTableInsert(int configuratorId, int configuratorConnId) throws BODSException {
+    public ConfiguratorVO loaderStagingTableInsert(int configuratorId, int configuratorConnId, Session session,
+        ConfiguratorExecutionEO configuratorExecutionEO) throws BODSException {
         int totalStgRecord = 0;
         String stagingTableName = "";
         String prevalidationTableName = "";
         ConfiguratorVO configuratorVO = null;
         ConfiguratorEO configuratorEO = null;
         ConfiguratorDAO configuratorDAO = null;
+        ConfiguratorValidationDAO configuratorValidationDAO = null;
         Connection connection = null;
         Connection sourceConnection = null;
         BytesUtil bytesUtil = null;
@@ -43,12 +49,15 @@ public final class ConfiguratorExecutor {
             configuratorDAO = new ConfiguratorDAO();
             configuratorVO = new ConfiguratorVO();
             bytesUtil = new BytesUtil();
+            configuratorValidationDAO = new ConfiguratorValidationDAO();
             targetSchemaConnection = new TargetSchemaConnection();
             connection = targetSchemaConnection.getTargetSchemaConnection(configuratorConnId);
             configuratorEO = configuratorDAO.fetchConfigurator(configuratorId);
             configuratorVO =
                 (ConfiguratorVO) bytesUtil.toObject(configuratorEO.getConfiguratorBinariesEOSet().iterator().next()
                     .getObject());
+            configuratorVO.setConfiguratorId(configuratorId);
+            configuratorVO.setLoaderExecutionId(configuratorExecutionEO.getConfiguratorExecId());
             stagingTableName = "STG_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorId;
             prevalidationTableName = "PV_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorId;
             configuratorDAO.deleteStagingTableRecords(stagingTableName, connection);
@@ -56,11 +65,16 @@ public final class ConfiguratorExecutor {
             sourceConnection =
                 targetSchemaConnection.getTargetSchemaConnection(configuratorVO.getSourceConfigurationConnectionId());
             totalStgRecord =
-                loadRecordsIntoStagingTable(stagingTableName, configuratorVO, connection, sourceConnection);
+                loadRecordsIntoStagingTable(stagingTableName, configuratorVO, connection, sourceConnection,
+                    configuratorExecutionEO, session);
+            configuratorExecutionEO.setCurrentStatus("PREVALIDATION_START");
+            configuratorValidationDAO.mergeStatusForConfigurator(session, configuratorExecutionEO);
             callPrevalidationProcedure(totalStgRecord, configuratorVO, connection, stagingTableName,
                 prevalidationTableName);
             configuratorDAO.updateStatusCodeBlock(sourceConnection, stagingTableName, configuratorVO);
             configuratorDAO.buildStagingDCFlagStatus(connection, 0, stagingTableName);
+            configuratorExecutionEO.setCurrentStatus("PREVALIDATION_END");
+            configuratorValidationDAO.mergeStatusForConfigurator(session, configuratorExecutionEO);
         } catch (BODSException bodsException) {
             throw bodsException;
         } catch (Exception exception) {
@@ -68,7 +82,7 @@ public final class ConfiguratorExecutor {
         } finally {
             targetSchemaConnection.targetSchemaClose(connection, null, null, null);
             targetSchemaConnection.targetSchemaClose(sourceConnection, null, null, null);
-        }
+        } return configuratorVO;
     }
 
     /**
@@ -130,6 +144,8 @@ public final class ConfiguratorExecutor {
         try {
             if (procedure.indexOf("##stagingTableName##") != -1) {
                 procedure = procedure.replaceAll("##stagingTableName##", stagingTableName);
+            } else if(procedure.indexOf("##STAGING_TABLE##") != -1) {
+                procedure = procedure.replaceAll("##STAGING_TABLE##", stagingTableName);
             }
             preparedStatement = connection.prepareCall(procedure);
             preparedStatement.executeQuery();
@@ -157,7 +173,8 @@ public final class ConfiguratorExecutor {
      * @throws BODSException the bODS exception
      */
     private int loadRecordsIntoStagingTable(String stagingTableName, ConfiguratorVO configuratorVO,
-        Connection connection, Connection sourceConnection) throws BODSException {
+        Connection connection, Connection sourceConnection, ConfiguratorExecutionEO configuratorExecutionEO,
+        Session session) throws BODSException {
         int rowCount = 0;
         int configuratorId = 0;
         StringBuffer sourceQuery = new StringBuffer();
@@ -166,9 +183,15 @@ public final class ConfiguratorExecutor {
         List<ConfiguratorColumnDefinitionVO> columnDefinitionVOList = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
+        ConfiguratorValidationDAO configuratorValidationDAO = null;
         try {
             targetSchemaConnection = new TargetSchemaConnection();
+            configuratorValidationDAO = new ConfiguratorValidationDAO();
             resultSet = getExtractResultSet(configuratorVO, sourceConnection);
+            configuratorExecutionEO.setCurrentStatus("EXTRACT_END");
+            configuratorValidationDAO.mergeStatusForConfigurator(session, configuratorExecutionEO);
+            configuratorExecutionEO.setCurrentStatus("STAGING_START");
+            configuratorValidationDAO.mergeStatusForConfigurator(session, configuratorExecutionEO);
             columnDefinitionVOList = configuratorVO.getConfiguratorColumnDefinitionVOList();
             configuratorId = configuratorVO.getConfiguratorId();
             destColumnNames = getDestinationMappingColumnDetails(columnDefinitionVOList);
@@ -185,6 +208,8 @@ public final class ConfiguratorExecutor {
                 preparedStatement.executeBatch();
                 preparedStatement.clearBatch();
             }
+           configuratorExecutionEO.setCurrentStatus("STAGING_END");
+           configuratorValidationDAO.mergeStatusForConfigurator(session, configuratorExecutionEO);
         } catch (BODSException bodsException) {
             throw bodsException;
         } catch (Exception exception) {

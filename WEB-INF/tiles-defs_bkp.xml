@@ -136,7 +136,23 @@
 	
 	<definition name="interfaceColumnMapping.footer" extends="bodsbase.main.footer"/>
 	
-	
-	
+	<definition name="configuratorProcessSummary.main" extends="bodsbase.main">
+    	<put name="page.head"         value="configuratorProcessSummary.html.head"/>
+        <put name="page.menu"    	  value="configuratorProcessSummary.menu"/>
+        <put name="page.body"         value="configuratorProcessSummary.body"/>
+        <put name="page.footer"       value="configuratorProcessSummary.footer"/>
+    </definition>
+    
+    <definition name="configuratorProcessSummary.html.head" extends="bodsbase.main.html.head">
+    </definition>
+    
+    <definition name="configuratorProcessSummary.menu" extends="bodsbase.main.menu">
+	</definition>
 
+	<definition name="configuratorProcessSummary.body" extends="bodsbase.main.body">
+		<put name="content" value="/jsp/configurator/ConfiguratorProcessSummary.jsp"/>
+	</definition>
+	
+	<definition name="configuratorProcessSummary.footer" extends="bodsbase.main.footer"/>
+	
 </tiles-definitions>

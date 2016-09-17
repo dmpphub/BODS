@@ -222,12 +222,12 @@ public final class ConfiguratorProcedureCreation {
                     if (curIndex == 0) {
                         interfaceTableName = configuratorInterfaceColumnVO.getTableName();
                         columnName += configuratorInterfaceColumnVO.getColumnName();
-                        columnValue += configuratorInterfaceColumnVO.getAttributeName() + "_L";
+                        columnValue += configuratorInterfaceColumnVO.getAttributeName() +"_L";
                     } else {
                         columnName += ", " + configuratorInterfaceColumnVO.getColumnName();
-                        columnValue += ", " + configuratorInterfaceColumnVO.getAttributeName() + "_L";
+                        columnValue += ", " + configuratorInterfaceColumnVO.getAttributeName() +"_L";
                     }
-                    procedureContent.append(configuratorInterfaceColumnVO.getAttributeName() + "_L := CUR_BODS."
+                    procedureContent.append(configuratorInterfaceColumnVO.getAttributeName() +"_L := CUR_BODS."
                         + configuratorInterfaceColumnVO.getAttributeName() + "; \n");
                     curIndex++;
                 }

@@ -121,6 +121,9 @@ public class ConfiguratorVO implements Serializable {
     /** The staging table name. */
     private List<String> prevalidationSeqNo;
 
+    /** The loader execution id. */
+    private int loaderExecutionId;
+
     /**
      * Instantiates a new configurator vo.
      */
@@ -612,11 +615,39 @@ public class ConfiguratorVO implements Serializable {
         this.prevalDataString = prevalDataString;
     }
 
+    /**
+     * Gets the prevalidation seq no.
+     *
+     * @return the prevalidation seq no
+     */
     public List<String> getPrevalidationSeqNo() {
         return prevalidationSeqNo;
     }
 
+    /**
+     * Sets the prevalidation seq no.
+     *
+     * @param prevalidationSeqNo the new prevalidation seq no
+     */
     public void setPrevalidationSeqNo(List<String> prevalidationSeqNo) {
         this.prevalidationSeqNo = prevalidationSeqNo;
+    }
+
+    /**
+     * Gets the loader execution id.
+     *
+     * @return the loader execution id
+     */
+    public int getLoaderExecutionId() {
+        return loaderExecutionId;
+    }
+
+    /**
+     * Sets the loader execution id.
+     *
+     * @param loaderExecutionId the new loader execution id
+     */
+    public void setLoaderExecutionId(int loaderExecutionId) {
+        this.loaderExecutionId = loaderExecutionId;
     }
 }

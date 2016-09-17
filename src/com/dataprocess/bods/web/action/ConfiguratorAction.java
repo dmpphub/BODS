@@ -18,7 +18,6 @@ import com.dataprocess.bods.vo.ConfiguratorVO;
 import com.dataprocess.bods.vo.ConfiguratorValidationVO;
 import com.dataprocess.bods.web.form.ConfiguratorForm;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ConfiguratorAction.
  */
@@ -127,17 +126,20 @@ public final class ConfiguratorAction extends Action {
             int configuratorConnId = Integer.parseInt(request.getParameter("configuratorConnId"));
             int configuratorId = Integer.parseInt(request.getParameter("configuratorId"));
             configuratorHandler = new ConfiguratorHandler();
-            configuratorHandler.execute(configuratorId, configuratorConnId);
+            configuratorForm.setConfiguratorVO(configuratorHandler.execute(configuratorId, configuratorConnId));
+            forwardName = "forward.success.processsummary";
         } else if (mapping.getPath().equals("/PrevalidationProcessLaunchMapping")) {
             configuratorVO = configuratorForm.getConfiguratorVO();
-            stagingTable = "STG_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorVO.getConfiguratorId();
+            stagingTable =
+                "STG_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorVO.getConfiguratorId();
             String dataTemplateName = configuratorVO.getConfiguratorName();
             configuratorHandler = new ConfiguratorHandler();
-            configuratorVO.setPrevalDataString(configuratorHandler.getStagintTableDetail(stagingTable,
-                dataTemplateName));
+            configuratorVO.setPrevalDataString(configuratorHandler
+                .getStagintTableDetail(stagingTable, dataTemplateName));
         } else if (mapping.getPath().equals("/PrevalidationProcessFetchMapping")) {
             configuratorVO = configuratorForm.getConfiguratorVO();
-            pvTableName = "PV_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorVO.getConfiguratorId();
+            pvTableName =
+                "PV_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorVO.getConfiguratorId();
             configuratorHandler = new ConfiguratorHandler();
             convertedJson = configuratorHandler.getPrevalidationDetail(pvTableName);
             valueObject.put("convertedJson", convertedJson);
@@ -148,6 +150,9 @@ public final class ConfiguratorAction extends Action {
             forwardName = null;
         } else if (mapping.getPath().equals("/ConfiguratorFinalExecuteMapping")) {
             configuratorHandler = new ConfiguratorHandler();
+            configuratorVO = configuratorForm.getConfiguratorVO();
+            configuratorHandler.executeStagingProcedure(configuratorVO);
+            forwardName = "forward.success.processsummary";
         } else if (mapping.getPath().equals("/ConfiguratorList")) {
             configuratorHandler = new ConfiguratorHandler();
             configuratorVO = configuratorHandler.fetchConfiguratorList(configuratorForm.getConfiguratorVO());
@@ -174,6 +179,28 @@ public final class ConfiguratorAction extends Action {
             }
         } else if (mapping.getPath().equals("/TargetColumnMappingLaunch")) {
             System.out.println(configuratorForm.getConfiguratorVO().getConfiguratorInterfaceColumnVOList());
+        } else if (mapping.getPath().equals("/CheckingConfiguratorRunningStautsMapping")) {
+            configuratorHandler = new ConfiguratorHandler();
+            String currentStatus = "";
+            int configuratorExecId = Integer.parseInt(request.getParameter("configuratorExecId"));
+            currentStatus = configuratorHandler.getConfiguratorCurrentStatus(configuratorExecId);
+            printWriter = response.getWriter();
+            printWriter.print(currentStatus);
+            printWriter.flush();
+            printWriter.close();
+            forwardName = null;
+        } else if (mapping.getPath().equals("/CompletedRecordDisplayMapping")) {
+            configuratorHandler = new ConfiguratorHandler();
+            String currentStatus = "";
+            configuratorVO = configuratorForm.getConfiguratorVO();
+            String stagingTableName =
+                "STG_" + configuratorVO.getConfiguratorConnectionId() + "_" + configuratorVO.getConfiguratorId();
+            currentStatus = configuratorHandler.getCompletedRecordCountDetails(stagingTableName);
+            printWriter = response.getWriter();
+            printWriter.print(currentStatus);
+            printWriter.flush();
+            printWriter.close();
+            forwardName = null;
         }
         return mapping.findForward(forwardName);
     }

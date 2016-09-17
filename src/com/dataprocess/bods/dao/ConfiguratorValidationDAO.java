@@ -11,9 +11,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dataprocess.bods.util.BODSException;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
-// TODO: Auto-generated Javadoc
+import com.dataprocess.bods.entity.ConfiguratorExecutionEO;
+import com.dataprocess.bods.util.BODSException;
+import com.dataprocess.bods.util.connectionutil.HibernateSessionManager;
+
 /**
  * The Class ConfiguratorValidationDAO.
  */
@@ -75,4 +81,54 @@ public final class ConfiguratorValidationDAO {
         return referenceColumnNameList;
     }
 
+    /**
+     * Merge status for configurator.
+     *
+     * @param session the session
+     * @param configuratorExecutionEO the configurator execution eo
+     * @return the int
+     * @throws BODSException the bODS exception
+     */
+    public int mergeStatusForConfigurator(Session session, ConfiguratorExecutionEO configuratorExecutionEO)
+        throws BODSException {
+        int loaderExecuitonId = 0;
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            configuratorExecutionEO = (ConfiguratorExecutionEO) session.merge(configuratorExecutionEO);
+            loaderExecuitonId = configuratorExecutionEO.getConfiguratorExecId();
+            transaction.commit();
+        } catch (Exception exception) {
+            transaction.rollback();
+            throw new BODSException("ConfiguratorValidationDAO", "mergeStatusForConfigurator", exception.getMessage());
+        }
+        return loaderExecuitonId;
+    }
+
+    /**
+     * Gets the configurator current status.
+     *
+     * @param configuratorExecId the configurator exec id
+     * @return the configurator current status
+     * @throws BODSException the bODS exception
+     */
+    public ConfiguratorExecutionEO getConfiguratorCurrentStatus(int configuratorExecId) throws BODSException {
+        Session session = null;
+        Criteria criteria = null;
+        ConfiguratorExecutionEO configuratorExecutionEO = null;
+        try {
+            session = HibernateSessionManager.getHibernateSession();
+            criteria = session.createCriteria(ConfiguratorExecutionEO.class);
+            criteria.add(Restrictions.eq("configuratorExecId", configuratorExecId));
+            configuratorExecutionEO = (ConfiguratorExecutionEO) criteria.uniqueResult();
+        } catch (Exception exception) {
+            throw new BODSException("ConfiguratorValidationDAO", "getConfiguratorCurrentStatus", exception.getMessage());
+        } finally {
+            if (session != null) {
+                session.clear();
+                session.close();
+            }
+        }
+        return configuratorExecutionEO;
+    }
 }

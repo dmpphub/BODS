@@ -63,7 +63,6 @@ function renderErrorChart(errorPrecentage) {
 		     url: "/bods/PrevalidationProcessFetchMapping.etl",
 		     success: function(data) {
 		    	 if(data != null && data != '') {
-		    		 alert($.parseJSON(data));
 		    		 var conditionVO = $.parseJSON(data);
 		    		 prevalidationViewList = conditionVO.configuratorVO.prevalidationStatusVO;
 		    		 formValidationDisplayScreen(prevalidationViewList);
